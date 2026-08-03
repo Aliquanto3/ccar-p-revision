@@ -15,19 +15,19 @@ Static site — no build step, no backend, no dependencies. Works offline once l
 
 ## Question bank
 
-280 original questions across the 7 blueprint domains, proportional to official exam weights:
+452 original questions (448 exam-scored + 4 partner-track items excluded from the mock exam), including a 215-item hard set of multi-constraint scenarios. The mock exam offers three modes: Easy (core questions only), Hard (hard set only), and Medium (an even per-domain mix) across the 7 blueprint domains, proportional to official exam weights:
 
 | Domain | Weight | Questions |
 |---|---|---|
-| D1 Solution Design & Architecture | 17% | 47 |
-| D2 Models, Prompting & Context | 13% | 36 |
-| D3 Integration | 19% | 51 |
-| D4 Evaluation, Testing & Optimization | 16% | 40 |
-| D5 Governance, Safety & Risk | 14% | 41 |
-| D6 Stakeholder Communication & Lifecycle | 14% | 43 |
-| D7 Developer Productivity & Enablement | 7% | 22 |
+| D1 Solution Design & Architecture | 17% | 75 |
+| D2 Models, Prompting & Context | 13% | 58 |
+| D3 Integration | 19% | 84 |
+| D4 Evaluation, Testing & Optimization | 16% | 67 |
+| D5 Governance, Safety & Risk | 14% | 64 |
+| D6 Stakeholder Communication & Lifecycle | 14% | 66 (+4 partner-track) |
+| D7 Developer Productivity & Enablement | 7% | 34 |
 
-Three questions are the official samples published in the public Exam Guide (flagged `exam-guide-sample`). Everything else is original material written from the public blueprint and course catalog objectives.
+The bank was independently reviewed against the official exam guide and Anthropic documentation (item-writing flaws, cue biases, duplicates). Three questions are the official samples published in the public Exam Guide (flagged `exam-guide-sample`). Everything else is original material written from the public blueprint and course catalog objectives.
 
 ## Run locally
 

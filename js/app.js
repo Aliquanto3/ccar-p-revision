@@ -12,7 +12,8 @@ const DOMAINS = {
 };
 const EXAM = { items: 63, minutes: 120, pass: 720, scaleMin: 100, scaleMax: 1000 };
 const BANK = window.QUESTIONS || [];
-const TARGET_BANK = 280;
+const SCORED = BANK.filter(q => !q.partnerTrack); // partner-track exclu du mock exam
+const TARGET_BANK = 452;
 
 /* ---------- utils ---------- */
 const $ = sel => document.querySelector(sel);
@@ -48,6 +49,7 @@ function questionCard(q, num, total, { showSource = true } = {}) {
       <span class="tag domain">D${q.domain} · ${esc(DOMAINS[q.domain].name)}</span>
       <span class="tag">${multi ? `select ${q.select}` : "select 1"}</span>
       ${showSource && q.source === "exam-guide-sample" ? '<span class="tag official">exam-guide sample</span>' : ""}
+      ${q.partnerTrack ? '<span class="tag">partner track — not exam-tested</span>' : ""}
       <span class="tag">${num} / ${total}</span>
     </div>
     <p class="q-text">${esc(q.question)}</p>
@@ -155,13 +157,15 @@ function viewPractice(app) {
         <label>Questions: <select id="p-count">
           <option>5</option><option selected>10</option><option>20</option><option value="all">all</option>
         </select></label>
+        <label><input type="checkbox" id="p-hard"> hard only</label>
         <button class="btn" id="p-start">Start practice</button>
       </div>
     </div>
     <div id="p-zone"></div>`;
   $("#p-start").addEventListener("click", () => {
-    const doms = [...app.querySelectorAll('input[type="checkbox"]:checked')].map(c => Number(c.value));
-    let pool = shuffle(BANK.filter(q => doms.includes(q.domain)));
+    const doms = [...app.querySelectorAll('.checkgroup input[type="checkbox"]:checked')].filter(c => c.id !== "p-hard").map(c => Number(c.value));
+    const hardOnly = $("#p-hard").checked;
+    let pool = shuffle(BANK.filter(q => doms.includes(q.domain) && (!hardOnly || q.difficulty === "hard")));
     const cv = $("#p-count").value;
     if (cv !== "all") pool = pool.slice(0, Number(cv));
     if (!pool.length) return;
@@ -208,37 +212,58 @@ function runPractice(zone, pool) {
 }
 
 /* ---------- mock exam ---------- */
-// Draw n questions following official domain weights, capped by bank availability.
-function weightedDraw() {
-  const byDom = {}; Object.keys(DOMAINS).forEach(d => byDom[d] = shuffle(BANK.filter(q => q.domain == d)));
-  const totalAvail = BANK.length;
-  const n = Math.min(EXAM.items, totalAvail);
+// Draw n questions following official domain weights, filtered by difficulty mode.
+// mode: "easy" (core only), "hard" (hard only), "medium" (balanced mix per domain).
+function weightedDraw(mode) {
+  const inMode = q => mode === "easy" ? q.difficulty !== "hard"
+                    : mode === "hard" ? q.difficulty === "hard"
+                    : true;
+  const n = Math.min(EXAM.items, SCORED.filter(inMode).length);
   const picked = [];
+  const leftovers = [];
   Object.entries(DOMAINS).forEach(([d, info]) => {
     const want = Math.round(n * info.weight / 100);
-    picked.push(...byDom[d].splice(0, want));
+    const core = shuffle(SCORED.filter(q => q.domain == d && q.difficulty !== "hard"));
+    const hard = shuffle(SCORED.filter(q => q.domain == d && q.difficulty === "hard"));
+    let take = [];
+    if (mode === "easy") take = core.splice(0, want);
+    else if (mode === "hard") take = hard.splice(0, want);
+    else { // medium: balanced mix, alternating rounding, fallback across pools
+      const wantHard = Math.min(hard.length, Math.round(want / 2));
+      take = hard.splice(0, wantHard).concat(core.splice(0, want - wantHard));
+    }
+    // fallback within domain if the mode pool ran short
+    if (take.length < want && mode !== "easy") take = take.concat(core.splice(0, want - take.length));
+    if (take.length < want && mode !== "hard") take = take.concat(hard.splice(0, want - take.length));
+    picked.push(...take);
+    leftovers.push(...(mode === "easy" ? core : mode === "hard" ? hard : core.concat(hard)));
   });
-  const rest = shuffle(Object.values(byDom).flat());
+  const rest = shuffle(leftovers);
   while (picked.length < n && rest.length) picked.push(rest.pop());
   return shuffle(picked.slice(0, n));
 }
 
 function viewMock(app) {
-  const n = Math.min(EXAM.items, BANK.length);
+  const n = Math.min(EXAM.items, SCORED.length);
   const minutes = Math.ceil(n * EXAM.minutes / EXAM.items);
-  const partial = BANK.length < EXAM.items
-    ? `<p style="font-size:.85rem;color:var(--muted)">Bank currently holds ${BANK.length} questions — this mock uses all of them with a proportional timer (${minutes} min). Full 63-question mocks unlock as the bank grows.</p>` : "";
+  const nHard = SCORED.filter(q => q.difficulty === "hard").length;
   app.innerHTML = `
     <p class="eyebrow">Mock exam</p>
     <h1>Timed simulation</h1>
     <div class="card">
       <p style="font-size:.92rem"><strong>${n} questions</strong> drawn according to the official domain weights ·
       <strong>${minutes} minutes</strong> · no feedback until the end · score reported on the 100–1000 scale (pass ≥ ${EXAM.pass}).</p>
-      ${partial}
-      <button class="btn" id="m-start">Begin</button>
+      <p style="font-size:.9rem">Pick a difficulty: <strong>Easy</strong> draws core questions only, <strong>Hard</strong> draws from the ${nHard}-question hard set (multi-constraint scenarios), and <strong>Medium</strong> mixes both evenly per domain. The real exam sits between Medium and Hard.</p>
+      <div class="setup-row">
+        <button class="btn secondary" id="m-easy">Easy mock</button>
+        <button class="btn" id="m-medium">Medium mock</button>
+        <button class="btn secondary" id="m-hard">Hard mock</button>
+      </div>
     </div>
     <div id="m-zone"></div>`;
-  $("#m-start").addEventListener("click", () => runMock($("#m-zone"), weightedDraw(), minutes));
+  [["m-easy","easy"],["m-medium","medium"],["m-hard","hard"]].forEach(([id,mode])=>{
+    $("#"+id).addEventListener("click", () => runMock($("#m-zone"), weightedDraw(mode), minutes));
+  });
 }
 
 let activeMockTimer = null; // single live interval — cleared on route change or restart
