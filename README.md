@@ -15,17 +15,17 @@ Static site — no build step, no backend, no dependencies. Works offline once l
 
 ## Question bank
 
-252 original questions across the 7 blueprint domains, proportional to official exam weights:
+280 original questions across the 7 blueprint domains, proportional to official exam weights:
 
 | Domain | Weight | Questions |
 |---|---|---|
-| D1 Solution Design & Architecture | 17% | 43 |
-| D2 Models, Prompting & Context | 13% | 33 |
-| D3 Integration | 19% | 48 |
+| D1 Solution Design & Architecture | 17% | 47 |
+| D2 Models, Prompting & Context | 13% | 36 |
+| D3 Integration | 19% | 51 |
 | D4 Evaluation, Testing & Optimization | 16% | 40 |
-| D5 Governance, Safety & Risk | 14% | 35 |
-| D6 Stakeholder Communication & Lifecycle | 14% | 35 |
-| D7 Developer Productivity & Enablement | 7% | 18 |
+| D5 Governance, Safety & Risk | 14% | 41 |
+| D6 Stakeholder Communication & Lifecycle | 14% | 43 |
+| D7 Developer Productivity & Enablement | 7% | 22 |
 
 Three questions are the official samples published in the public Exam Guide (flagged `exam-guide-sample`). Everything else is original material written from the public blueprint and course catalog objectives.
 

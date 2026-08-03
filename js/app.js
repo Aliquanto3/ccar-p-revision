@@ -12,7 +12,7 @@ const DOMAINS = {
 };
 const EXAM = { items: 63, minutes: 120, pass: 720, scaleMin: 100, scaleMax: 1000 };
 const BANK = window.QUESTIONS || [];
-const TARGET_BANK = 252;
+const TARGET_BANK = 280;
 
 /* ---------- utils ---------- */
 const $ = sel => document.querySelector(sel);
