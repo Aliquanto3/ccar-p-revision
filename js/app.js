@@ -256,13 +256,18 @@ function viewMock(app) {
       <p style="font-size:.9rem">Pick a difficulty: <strong>Easy</strong> draws core questions only, <strong>Hard</strong> draws from the ${nHard}-question hard set (multi-constraint scenarios), and <strong>Medium</strong> mixes both evenly per domain. The real exam sits between Medium and Hard.</p>
       <div class="setup-row">
         <button class="btn secondary" id="m-easy">Easy mock</button>
-        <button class="btn" id="m-medium">Medium mock</button>
+        <button class="btn secondary" id="m-medium">Medium mock</button>
         <button class="btn secondary" id="m-hard">Hard mock</button>
       </div>
     </div>
     <div id="m-zone"></div>`;
-  [["m-easy","easy"],["m-medium","medium"],["m-hard","hard"]].forEach(([id,mode])=>{
-    $("#"+id).addEventListener("click", () => runMock($("#m-zone"), weightedDraw(mode), minutes));
+  const modeBtns = [["m-easy","easy"],["m-medium","medium"],["m-hard","hard"]];
+  modeBtns.forEach(([id,mode])=>{
+    $("#"+id).addEventListener("click", () => {
+      modeBtns.forEach(([other])=>$("#"+other).classList.add("secondary"));
+      $("#"+id).classList.remove("secondary"); // seul le mode choisi est mis en avant
+      runMock($("#m-zone"), weightedDraw(mode), minutes);
+    });
   });
 }
 
