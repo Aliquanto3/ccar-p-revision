@@ -2,6 +2,16 @@
 // Schema: {id, domain, front, back}
 window.FLASHCARDS = window.FLASHCARDS || {};
 window.FLASHCARDS["ccdv-p"] = [
+  // D3 / D6 — observability, control bands, spend (module 3)
+  { id: "v301", domain: 3, front: "Compliance API vs audit logs vs OpenTelemetry", back: "Compliance API: what was said (content + audit events). Audit logs: who did what when (metadata only). OTel: how surfaces run (optional, operational)." },
+  { id: "v302", domain: 3, front: "Why enable the Compliance API before members get access?", back: "Activity feed events and local session transcripts are captured only while it is on: a late start leaves gaps that cannot be filled." },
+  { id: "v303", domain: 3, front: "Retention defaults and limits", back: "Default: kept indefinitely. Custom window: organization-wide, minimum 30 days, no zero option. Deleted content does not come back." },
+  { id: "v304", domain: 3, front: "Retention exceptions in the Compliance API", back: "Activity feed: 6 years. Remote Cowork transcripts: 6 years unless deleted. Local Cowork/Claude Code transcripts: custom window (or 6 years), 30 days with HIPAA readiness." },
+  { id: "v305", domain: 3, front: "Control-band tiers", back: "1σ log · 2σ or drift rule: read-only diagnosis · 3σ: propose via PR or pre-approved runbook. Detection is a deterministic, tested script." },
+  { id: "v306", domain: 3, front: "Western Electric drift rules used in the play", back: "4 of the last 5 readings above 1σ, or 8 readings in a row above the mean (counted as 2σ)." },
+  { id: "v307", domain: 3, front: "Noise rates at 720 hourly readings a month", back: ">1σ ≈ 4 per day · >2σ ≈ 16 per month · >3σ ≈ 1 per month." },
+  { id: "v601", domain: 6, front: "Biggest Enterprise spend lever before touching caps", back: "The default model and effort level (organization-wide or per role), plus effort caps for routine work: most members never change the picker." },
+  { id: "v602", domain: 6, front: "Analytics API vs Spend Limits API", back: "Analytics API reads usage and cost (by group, for chargeback). Spend Limits API sets per-member caps." },
   // D1 — Advanced Agent Architecture and Orchestration (module 2)
   { id: "v101", domain: 1, front: "What does a subagent start with, and what comes back?", back: "Its own system prompt plus a task description written by the parent, in a fresh context window. Only a summary returns; the full run goes to a separate transcript." },
   { id: "v102", domain: 1, front: "Two roles of a subagent's description", back: "It decides when the main agent launches the subagent, and it guides the input prompt the main agent writes when delegating." },

@@ -104,6 +104,37 @@ window.NOTES["ccdv-p"] = {
       "Telemetry and instrumentation — distributed traces for agent loops and tool calls, token and cost metrics, cache diagnostics, grounding and reasoning traceability, structured logs, content capture under privacy constraints such as ZDR",
       "Production monitoring and alerting — SLIs and SLOs, alerting and dashboards with token and cost telemetry, quality drift, behavioral regressions, anomalous usage, drift after model updates",
       "Trace analysis at scale — sampling, aggregation and failure-cohort analysis to surface systemic issues invisible in single traces"
+    ],
+    sections: [
+      { title: "Visibility — three records, set up before access", points: [
+        "Compliance API = content record (chat data, file content, activity feed events) + audit log events. Covers Claude chat, Cowork and Claude Code sessions. Enabled by the Primary Owner; integrates with CASB, DLP, eDiscovery, SIEM.",
+        "Audit logs = metadata only (who did what when, no prompts or completions). Full data export = separate Primary Owner capability, wholesale pull.",
+        "Activity feed events and local session transcripts are captured only while the Compliance API is on: turning it on late leaves gaps that cannot be filled. Route it to a review a named owner already runs — an unread record is not a control.",
+        "Key scope is chosen per key at creation: Primary Owner keys can cover the whole parent or one child organization; Owner keys cover their own organization.",
+        "OpenTelemetry = how surfaces run (usage, performance), optional and complementary. Claude Code: operational by default, prompt logging is an opt-in. Cowork (current Desktop): metadata only unless the otlpContentCapture device policy adds content; metadata always includes member emails and folder paths → filter in the collector.",
+        "Retention: default = kept indefinitely; custom window ≥ 30 days, no zero option; organization-wide (a chat in a project follows the project's window). Shortening later deletes history for good.",
+        "Exceptions: activity feed 6 years regardless · remote (cloud) Cowork session transcripts 6 years unless deleted · local Cowork / Claude Code transcripts = custom window, or 6 years if none, or 30 days from capture with HIPAA readiness.",
+        "Inference hooks: every prompt from chat, Cowork and Claude Code goes to the security team’s server for allow-or-deny before Claude answers — block at the door instead of governing after the fact."
+      ]},
+      { title: "Closing the loop — control bands", points: [
+        "Detection is deterministic, version-controlled and unit-tested: mean and σ over a rolling window (30 days of hourly readings), no model involved. Tiers live in version-controlled config (bands.yaml).",
+        "Noise alone (bell curve, 720 readings/month): above 1σ ≈ 1 in 6 (≈ 4/day), above 2σ ≈ 1 in 44 (≈ 16/month), above 3σ ≈ 1 in 740 (≈ 1/month).",
+        "Tiers: 1σ → log only · 2σ (or a drift rule) → Claude read-only diagnosis (Read, Grep, Bash(gh run view *)) · 3σ → propose: PR into the review gate or a pre-approved runbook (e.g. rollback-deploy).",
+        "Western Electric drift rules: 4 of the last 5 readings above 1σ, or 8 in a row above the mean.",
+        "Floor σ (MIN_SIGMA in the metric’s units) so a flat baseline does not turn every blip into a breach; the newest reading is excluded from the baseline.",
+        "Claude runs stateless and non-interactive (CI step or Agent SDK service in a sandbox) and writes its diagnosis as intent.md (problem, evidence, proposed outcome, affected systems, constraints, action taken, open questions). People triage: fix, schedule or dismiss — dismissals tune the bands.",
+        "When the fix ships, add an eval for the incident (start commit, original request, checks) so the class cannot come back unnoticed.",
+        "Measure: leading = breach → intent.md in the triage queue; lagging = share of findings merged as fixes, repeat incidents of the same class.",
+        "Claude Tag (public beta, Slack): Claude in the channel under its own identity, verifies recovery through MCP, writes post-mortems to a version-controlled lessons file; small bounded fixes → PR, larger work → intent.md."
+      ]}
+    ],
+    pitfalls: [
+      "Answering a content request with audit logs (metadata only).",
+      "Enabling the Compliance API after rollout, or enabling it with no named reviewer.",
+      "Assuming otlpContentCapture off also removes emails and folder paths.",
+      "Expecting a per-group retention window or a zero-retention option.",
+      "Letting a model decide whether a reading is anomalous, or letting Claude act at 2σ.",
+      "Forgetting the σ floor on a flat baseline."
     ]
   },
   4: {
@@ -126,6 +157,21 @@ window.NOTES["ccdv-p"] = {
     examTasks: [
       "Cost architecture at scale — cost modeling and forecasting, model routing and cascades, caching strategy and diagnostics, batch vs realtime economics, per-tenant budget enforcement",
       "Latency engineering — time-to-first-token vs total latency, streaming, parallel tool execution, cache checkpointing, effort-level tuning"
+    ],
+    sections: [
+      { title: "Managing Claude Enterprise spend", points: [
+        "Billing: per-member platform fee + pooled token consumption (sales-assisted: monthly in arrears; self-serve: prepaid credits, usage pauses when they run out). The pool is organization-wide; agentic surfaces consume more per task.",
+        "Biggest levers before any cap: the default model and default effort (most members never touch the picker), per-role defaults, effort caps for routine work.",
+        "Organization instructions = soft steering at the point of use (short answers, only the needed files, highest effort only when needed). Skills load on demand (cheaper than re-sharing prompts); project context is present in each project conversation.",
+        "Agentic habits: scheduled tasks keep consuming whether or not anyone reads them → review and delete. “Run Cowork in the cloud” is off by default, but unified-experience members run agentic work on Anthropic’s infrastructure anyway.",
+        "Before raising a cap: is usage the symptom (change settings) or was the cap set too low (re-base it)? Review caps on a cadence in both directions — monthly by default, tighter early in a rollout.",
+        "Reading spend: dashboard (trends, Groups view) · Analytics chat (ad-hoc questions) · Analytics API (programmatic, by group, for chargeback; Primary Owner key) · Spend Limits API sets per-member caps · spend CSV is per member."
+      ]}
+    ],
+    pitfalls: [
+      "Raising a cap when the default model is the cause.",
+      "Using the Spend Limits API or the per-member CSV for group chargeback.",
+      "Relying on organization instructions as a hard limit."
     ]
   },
   7: {

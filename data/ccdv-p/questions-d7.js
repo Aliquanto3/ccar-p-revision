@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 7: Runtime Guardrails and Production Security (11%) — 8 items
+// CCDV-P Revision — Domain 7: Runtime Guardrails and Production Security (11%) — 9 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d7-01", domain:7, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -64,5 +64,13 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "The plugin's settings.json overrides the permissions and model chosen in the user's settings",
     "The plugin's settings.json sets the agent key, which promotes one of its subagents to the main thread"],
   correct:[3],
-  explanation:"A plugin's settings.json is honored for only two keys, and the agent key promotes one of the plugin's subagents, with its system prompt, tool restrictions and model, to the main thread. Plugin skills are namespaced under the plugin name and do not replace yours (B), other settings keys are ignored (C), and plugin components run alongside your configuration rather than rewriting it (A)." }
+  explanation:"A plugin's settings.json is honored for only two keys, and the agent key promotes one of the plugin's subagents, with its system prompt, tool restrictions and model, to the main thread. Plugin skills are namespaced under the plugin name and do not replace yours (B), other settings keys are ignored (C), and plugin components run alongside your configuration rather than rewriting it (A)." },
+{ id:"d7-09", domain:7, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A bank's security team wants to make sure prompts containing customer card numbers never reach Claude from chat, Cowork or Claude Code. The retention window is 30 days and the Compliance API feeds its DLP tool. What should it propose?",
+  options:["Inference hooks that send each prompt to its own server for an allow-or-deny decision",
+    "A shorter retention window so that such content is deleted soon after it reaches Claude",
+    "The Compliance API feed to DLP so that the reviewers flag such content after it is sent",
+    "An organization instruction telling Claude to refuse prompts that contain such content"],
+  correct:[0],
+  explanation:"Inference hooks send every prompt from Claude chat, Cowork and Claude Code to a server the security team or its vendor runs for an allow-or-deny decision before Claude answers, so content is blocked at the door. Retention (B) governs content after the fact and cannot go below 30 days, DLP on the Compliance API (C) detects after sending, and an instruction (D) is soft steering, not a control." }
 ]);

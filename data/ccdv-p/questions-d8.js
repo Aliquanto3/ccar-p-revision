@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 8: Agent Fleet Operations for Software Delivery (10%) — 5 items
+// CCDV-P Revision — Domain 8: Agent Fleet Operations for Software Delivery (10%) — 8 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d8-01", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -41,5 +41,29 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Add the new rule to each engineer's personal CLAUDE.md and leave the skill as it is now",
     "Update the skill folder by pull request, get the policy owner's sign-off, and merge it"],
   correct:[3],
-  explanation:"A skill is versioned institutional knowledge: change it like code, with the policy owner signing off, and engineers pick up the new version automatically in their next session. Local copies (B) drift, personal CLAUDE.md lines (C) split the source of truth from the skill, and manual invocation (A) adds a step the skill's description already handles by triggering on the relevant tasks." }
+  explanation:"A skill is versioned institutional knowledge: change it like code, with the policy owner signing off, and engineers pick up the new version automatically in their next session. Local copies (B) drift, personal CLAUDE.md lines (C) split the source of truth from the skill, and manual invocation (A) adds a step the skill's description already handles by triggering on the relevant tasks." },
+{ id:"d8-06", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"At 14:00 the 5xx rate on a claim status endpoint lands above 3σ. A release went out at 13:52. bands.yaml maps 3σ to propose, with the routes pull_request and runbook:rollback-deploy. What should the monitoring agent do?",
+  options:["Push a fix restoring the cache straight to main, then write its diagnosis as intent.md",
+    "Trigger the rollback runbook approved in advance, then write its diagnosis as intent.md",
+    "Page the on-call engineer and wait for approval before it reads the metric history",
+    "Edit the production configuration to restore the cache, then open a PR describing it"],
+  correct:[1],
+  explanation:"The propose tier holds the agent to its listed routes: open a PR into the review gate or trigger a pre-approved runbook. With a release minutes before the breach, the rollback runbook is the fitting route, and the finding is written as intent.md for triage. Pushing to main (A) and editing production (D) are outside the routes, and waiting for a person (C) is what the loop removes." },
+{ id:"d8-07", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"In the control-band play, the 2σ tier invokes Claude to diagnose a CI failure-rate breach without acting on it. Which tool allowlist fits that tier?",
+  options:["Read, Grep, and an unrestricted Bash command",
+    "Read, Grep, and Bash limited to gh pr create",
+    "Read, Edit, and Bash limited to gh run view",
+    "Read, Grep, and Bash limited to gh run view"],
+  correct:[3],
+  explanation:"The 2σ tier is read-only diagnosis: Read, Grep and Bash(gh run view *). Creating pull requests (B) belongs to the 3σ propose tier, Edit (C) changes files, and unrestricted Bash (A) removes the boundary the tier exists to keep." },
+{ id:"d8-08", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"Claude Tag is a member of the team's incident channel. An engineer tags it on a ticket that asks to change the claims data schema across three services. How should the work proceed?",
+  options:["Claude writes the request up as intent.md for Stage 1 planning",
+    "Claude opens one PR into the review gate with the whole change",
+    "Claude applies the change from the channel after a team approval",
+    "Claude replies with a summary and hands the ticket back to people"],
+  correct:[0],
+  explanation:"Claude Tag triages tagged work: a small, well-bounded fix arrives as a PR through the review gate, and anything larger, such as a cross-service schema change, is written up as intent.md for Stage 1: Plan. A single PR (B) skips planning, applying from the channel (C) bypasses the gates, and handing back (D) drops the loop." }
 ]);

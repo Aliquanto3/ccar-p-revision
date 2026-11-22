@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 6: Cost and Latency Optimization at Scale (8%) — 1 items
+// CCDV-P Revision — Domain 6: Cost and Latency Optimization at Scale (8%) — 4 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d6-01", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -8,5 +8,29 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Mark the system prompt and tool definitions for prompt caching so later calls reuse them",
     "Cut the examples from the system prompt so that each call sends fewer tokens to the model"],
   correct:[2],
-  explanation:"Prompt caching is built for stable parts of a request, such as a system prompt and tool definitions, reused across calls at a fraction of the cost, and it does not change what the model sees. Compaction (B) summarizes old conversation turns rather than the prompt, moving instructions to memory (A) makes them optional reads, and removing examples (D) changes behavior." }
+  explanation:"Prompt caching is built for stable parts of a request, such as a system prompt and tool definitions, reused across calls at a fraction of the cost, and it does not change what the model sees. Compaction (B) summarizes old conversation turns rather than the prompt, moving instructions to memory (A) makes them optional reads, and removing examples (D) changes behavior." },
+{ id:"d6-02", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"The Platform group hits its spend cap in month two and requests an increase. The review shows most of its spend is the most capable model, at the default effort, producing routine pull-request summaries. Work volume must not drop. Which response fits the spend-governance guidance?",
+  options:["Raise the cap for the members who hit it, and leave the role's defaults as they are",
+    "Raise the cap for the Platform group, and review its usage again at the next quarter",
+    "Lower the default model for the role those members hold, and keep the cap where it is",
+    "Add an organization instruction asking members to pick a smaller model for summaries"],
+  correct:[2],
+  explanation:"A cap increase is a prompt to look: here usage is the symptom, so the setting changes, not the cap. Most members never touch the picker, so the role's default model drives the bill; lowering it keeps the same volume at lower spend. Raising caps (B, C) pays for the symptom, and an organization instruction (D) is soft steering that members' default choices bypass." },
+{ id:"d6-03", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"Finance wants a monthly chargeback of Claude Enterprise usage and cost by group, loaded automatically into its own finance tooling. Which source fits?",
+  options:["The Spend Limits API, which returns each member's cap and the usage against it",
+    "The Analytics API, which breaks down usage and cost by group for that tooling",
+    "Analytics chat, asked each month for the spend by group and copied into a sheet",
+    "The spend CSV from the dashboard, loaded as is since it has one row per group"],
+  correct:[1],
+  explanation:"The Analytics API pulls usage and cost programmatically into finance tooling and breaks them down by group; a Primary Owner generates its key. The Spend Limits API sets per-member caps (A), Analytics chat answers one-off questions (C), and the spend CSV is per member and must be joined to a group mapping (D)." },
+{ id:"d6-04", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"Spend keeps climbing with no new members. Activity shows many Cowork scheduled tasks producing reports nobody opens. Members are on the unified Claude experience. Which action addresses the cause?",
+  options:["Lower the organization's default effort so that each scheduled run costs less",
+    "Turn off \"Run Cowork in the cloud\" so that the scheduled tasks stop running",
+    "Add an organization instruction asking Claude to keep each report brief",
+    "Ask members to review their scheduled tasks and delete the ones no one uses"],
+  correct:[3],
+  explanation:"Scheduled tasks keep consuming on their cadence whether or not anyone reads the output; the fix is a member habit of reviewing and deleting unused tasks (with spend caps pausing a member at the limit). Members on the unified Claude experience run agentic work on Anthropic's infrastructure even with that setting off (B), and shorter reports or lower effort (C, D) trim the cost of work that should not run at all." }
 ]);
