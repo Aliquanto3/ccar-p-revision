@@ -47,6 +47,7 @@ window.CERTS["ccdv-f"] = {
   name: "Claude Certified Developer – Foundations",
   storagePrefix: "ccdvf:",
   guide: { label: "Exam Guide v1.1 (November 2026)", url: "https://cc.sj-cdn.net/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1794946716/Claude_Certified_Developer_-_Foundations_Exam_Guide.pdf" },
+  officialPage: "https://anthropic-partners.skilljar.com/claude-certified-developer-foundations-certification",
   exam: { items: 53, minutes: 120, pass: 720, scaleMin: 100, scaleMax: 1000, fee: "$125", note: "proctored (Pearson VUE, OnVUE or test center)" },
   targetBank: 160,
   domains: {
