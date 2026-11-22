@@ -12,7 +12,7 @@ certs.forEach(c=>fs.readdirSync(path.join(process.cwd(),'data',c)).filter(f=>/^q
 const HARD_ONLY=false;
 const Q=certs.flatMap(c=>(window.BANK[c]||[]).map(q=>Object.assign({},q,{id:c+':'+q.id}))).filter(q=>q.source!=='exam-guide-sample');
 const RATIONALE=/,\s+(since|because|keeping|making|letting|giving|preserving|breaking|guaranteeing|restoring|trading|sorting|committing|so\s)/;
-const ABSOLUTE=/\b(always|never|every|entirely|outright|forever|nothing:)|full stop/i;
+const ABSOLUTE=/\b(always|never|every|entirely|outright|forever)\b|\bnothing:|full stop/i;
 const JARGON=/\b(scoped|per-|bounded|explicit|structured|versioned|deterministic)\b/i;
 const flags={};
 function flag(q,code){(flags[q.id]=flags[q.id]||new Set()).add(code);}
@@ -54,6 +54,13 @@ for(const c of certs){
   const multi=B.filter(q=>q.type==='multi'), pos=[0,0,0,0,0];
   multi.forEach(q=>q.correct.forEach(i=>pos[i]++));
   if(multi.length>=4 && pos.some(n=>n>multi.length*0.6)) console.log('R9-multi-positions ['+c+'] clés multi par position A-E:',pos.join('/'),'sur',multi.length,'items');
+}
+// R10 — « la plus longue est la bonne » : part des items à réponse unique dont la clé est strictement la plus longue
+// (hasard = 25 % sur 4 options). Avertissement au-delà de 30 % par certification.
+for(const c of certs){
+  const S=Q.filter(q=>q.id.startsWith(c+':')&&q.type==='single');
+  const n=S.filter(q=>{const l=q.options.map(o=>o.length),k=q.correct[0];return l.every((x,i)=>i===k||x<l[k]);}).length;
+  if(S.length>=20 && n/S.length>0.30) console.log('R10-longest-key ['+c+'] clé strictement la plus longue:',n,'/',S.length,'('+Math.round(100*n/S.length)+'%)');
 }
 const ids=Object.keys(flags);
 const byRule={};
