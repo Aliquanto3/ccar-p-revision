@@ -1,4 +1,4 @@
-// CCDV-F Revision — Domain 5: Model Selection and Optimization (16.8%) — 20 items
+// CCDV-F Revision — Domain 5: Model Selection and Optimization (16.8%) — 22 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d5-01", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -160,5 +160,21 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
     "thinking with type adaptive, and output_config.effort set to the value adaptive",
     "thinking with type adaptive, and budget_tokens set where effort used to be"],
   correct:[1],
-  explanation:"Adaptive thinking is thinking: {type: adaptive}, and effort is set separately at output_config.effort. Effort does not belong inside the thinking object (A), adaptive is a thinking mode, not an effort value (C), and budget_tokens (D) is the legacy manual budget, not effort." }
+  explanation:"Adaptive thinking is thinking: {type: adaptive}, and effort is set separately at output_config.effort. Effort does not belong inside the thinking object (A), adaptive is a thinking mode, not an effort value (C), and budget_tokens (D) is the legacy manual budget, not effort." },
+{ id:"d5-p11", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"In Claude Code at the default effort, an engineer asks Claude to fix twelve failing tests. It fixes eight, then stops and hands back a summary of the four still failing; the fixes it made are correct. The engineer wants the whole job done without paying for more than it needs. What should she change first?",
+  options:["Switch to a more capable model and keep the default effort",
+    "Set effort to max so that the task cannot stop short again",
+    "Raise effort one level and rerun on the same model",
+    "Add \"do not stop until all tests pass\" to the prompt"],
+  correct:[2],
+  explanation:"Correct work that stops early is an effort signal: the model knew enough but did not try hard enough, so go up one level and rerun. Change the model only if more effort does not fix it (A). Jumping to max (B) overspends on future runs. A prompt line (D) fights the effort setting instead of changing it." },
+{ id:"d5-p12", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"After adding cache_control to the last of 14 tool definitions, a cost dashboard built on usage.input_tokens shows input falling by about 90%. The invoice fell much less. What should the dashboard compute?",
+  options:["input_tokens plus cache_read and cache_creation tokens, each at its own price",
+    "input_tokens alone, as cached tokens are free once the cache has been written",
+    "input_tokens plus cache_read tokens, both billed at the normal input price",
+    "output_tokens plus input_tokens, as cache writes are billed as output tokens"],
+  correct:[0],
+  explanation:"With caching on, input_tokens excludes the cached prefix; the true input is input_tokens + cache_read_input_tokens + cache_creation_input_tokens, with reads at a fraction of the price and writes at a premium (1.25× for 5 minutes, 2× for 1 hour). Cached tokens are not free (B), reads are not full price (C), and writes are input, not output (D)." }
 ]);

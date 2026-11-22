@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 2: Production Integration, Reliability, and Knowledge Grounding (20%) — 27 items
+// CCDV-P Revision — Domain 2: Production Integration, Reliability, and Knowledge Grounding (20%) — 28 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d2-01", domain:2, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -217,5 +217,13 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "A prompt, the primitive that the user controls",
     "A tool, with readOnlyHint set to true on it"],
   correct:[2],
-  explanation:"Prompts are user-controlled templates, such as slash commands or menu options. Tools are model-controlled, whatever the description says (A, D). Resources are application-controlled context data (B)." }
+  explanation:"Prompts are user-controlled templates, such as slash commands or menu options. Tools are model-controlled, whatever the description says (A, D). Resources are application-controlled context data (B)." },
+{ id:"d2-29", domain:2, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A loop runs three parallel tool calls in threads. When the permit service throws an exception, the loop stops and the two successful results are lost. The agent should keep going and adapt. What should the tool runner do?",
+  options:["Catch the exception, and return a tool_result for that call with is_error set and a useful message",
+    "Catch the exception, and drop that call's tool_result so that only the two successful results are sent back",
+    "Let the exception stop the loop, and rerun the whole turn from the beginning after a short wait",
+    "Catch the exception, and return an empty tool_result for that call so the request stays valid"],
+  correct:[0],
+  explanation:"Each tool_use needs a tool_result, and a failure goes back as one with is_error: true and a message saying what went wrong and what to try next. Dropping it (B) makes the next request invalid. Rerunning the turn (C) repeats the two good calls. An empty result (D) reads as valid data." }
 ]);

@@ -1,4 +1,4 @@
-// CCDV-F Revision — Domain 3: Claude Code (3.1%) — 6 items
+// CCDV-F Revision — Domain 3: Claude Code (3.1%) — 7 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d3-01", domain:3, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -48,5 +48,13 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
     "Run the job with dontAsk so that calls without a hook are denied",
     "Run claude doctor to see what was rejected, then fix the file's JSON"],
   correct:[3],
-  explanation:"A -p run shows no dialog: Claude Code skips the broken file and continues, so the hooks silently disappear. claude doctor lists what was rejected (here, invalid JSON such as a trailing comma). CLAUDE.md (A) is a request, not a hook. The local file (B) is not the fix for a broken shared file. dontAsk (C) changes approvals but leaves the hooks missing." }
+  explanation:"A -p run shows no dialog: Claude Code skips the broken file and continues, so the hooks silently disappear. claude doctor lists what was rejected (here, invalid JSON such as a trailing comma). CLAUDE.md (A) is a request, not a hook. The local file (B) is not the fix for a broken shared file. dontAsk (C) changes approvals but leaves the hooks missing." },
+{ id:"d3-p05", domain:3, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A CI job runs Claude Code with CLAUDE_CODE_EFFORT_LEVEL=low in its environment. The repository's settings set effortLevel to high, and a review subagent's frontmatter sets effort to xhigh. Which effort applies while the review subagent runs in that job?",
+  options:["xhigh, because subagent frontmatter applies while that subagent runs",
+    "high, because effortLevel in settings sets the level for each session",
+    "the model default, because the three settings disagree with each other",
+    "low, because the environment variable wins over every other setting"],
+  correct:[3],
+  explanation:"The environment variable sits at the top of Claude Code's effort order and wins even over a running skill or subagent's own setting; frontmatter (A) applies only when no environment variable is set, and effortLevel (B) is just where a new session starts. Conflicts resolve by that order, not by falling back to the default (C). An organization cap, if set, still trims the result." }
 ]);

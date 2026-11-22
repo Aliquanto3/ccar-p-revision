@@ -223,7 +223,8 @@ window.NOTES["ccdv-f"] = {
       { title: "Tool schemas", points: [
         "Claude proposes calls; your code executes them and returns tool_result. Schema = specific name + description (what, when, when not, what it returns; 3–4 sentences) + input_schema.",
         "Required only when the call makes no sense without it (over-required fields get invented values). Overlapping tools → exclusion conditions; still overlapping → merge into one tool with a type parameter.",
-        "Parallel calls are the default for independent work; dependent calls → separate turns, disable_parallel_tool_use if needed. Failed tools return is_error: true, never an empty result."
+        "Parallel calls are the default for independent work; dependent calls → separate turns, disable_parallel_tool_use if needed. Failed tools return is_error: true, never an empty result.",
+        "Return all tool_results of a turn in one user message (separate messages reduce parallel calls). When results pile up in context, programmatic tool calling lets a script call the tools and only its printout reaches Claude (allowed_callers, container ID; not with strict tools)."
       ]},
       { title: "MCP", points: [
         "Tools (model-controlled) · resources (application-controlled data, direct or templated) · prompts (user-invoked templates). Build once, any MCP client connects.",

@@ -71,6 +71,10 @@ window.FLASHCARDS["ccdv-p"] = [
   { id: "v813", domain: 8, front: "Cloud scheduled task limits", back: "Research preview · at most hourly · fresh clone of the default branch · pushes to claude/… unless the prompt names a branch." },
   { id: "v504", domain: 5, front: "Pairwise judge prefers the first answer", back: "Evaluate each pair in both orders; count only verdicts that survive the swap." },
   { id: "v505", domain: 5, front: "Judge trend jumps with no product change", back: "Judge drift: pin the judge model, re-run the human-labeled set, compare agreement." },
+  { id: "v606", domain: 6, front: "Effort or model?", back: "Correct but stopped short → raise effort one level. Effort maxed and still wrong → the model lacks knowledge: move up, restart at the default effort." },
+  { id: "v607", domain: 6, front: "Claude Code effort precedence", back: "Env var > skill/subagent frontmatter > session (/effort, --effort) > effortLevel setting > model default. Org cap trims all." },
+  { id: "v608", domain: 6, front: "Programmatic tool calling — four changes", back: "Add the code execution tool · allowed_callers on callable tools · send the container ID back · describe each result's shape. Not with strict tools." },
+  { id: "v609", domain: 6, front: "Parallel tool calls stay parallel when…", back: "All tool_results go back in one user message (one per tool_use, failures with is_error)." },
   // D2 — Production Integration, Reliability, and Knowledge Grounding (module 1)
   { id: "v201", domain: 2, front: "Web search: what does your code NOT have to do, and why?", back: "Write a handler or send a tool_result. It is a server tool running on Anthropic's infrastructure; you add one entry to tools and get the finished answer back." },
   { id: "v202", domain: 2, front: "allowed_domains — four formatting rules", back: "Bare domain (no https://) · subdomains included · a specific subdomain restricts to it only · cannot be combined with blocked_domains in the same request (400)." },

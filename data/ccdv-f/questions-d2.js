@@ -1,4 +1,4 @@
-// CCDV-F Revision — Domain 2: Applications and Integration (33.1%) — 24 items
+// CCDV-F Revision — Domain 2: Applications and Integration (33.1%) — 26 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d2-01", domain:2, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -192,5 +192,21 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
     "Send the thinking blocks back unmodified with the assistant turns in the tool loop",
     "Summarize the thinking into a short text block placed in each user turn instead"],
   correct:[2],
-  explanation:"Thinking blocks carry the reasoning behind tool calls; the docs say to pass them back unmodified, especially during tool use. display omitted (A) empties the text but billing is the same. Low effort (B) reduces reasoning instead of keeping it. A rewritten summary (D) is not the block Claude produced, and text in tool-result turns teaches Claude to end its turn." }
+  explanation:"Thinking blocks carry the reasoning behind tool calls; the docs say to pass them back unmodified, especially during tool use. display omitted (A) empties the text but billing is the same. Low effort (B) reduces reasoning instead of keeping it. A rewritten summary (D) is not the block Claude produced, and text in tool-result turns teaches Claude to end its turn." },
+{ id:"d2-p10", domain:2, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A site-readiness check needs three independent lookups. Claude asks for them one per response, so the user waits for each in turn. The loop runs each tool and appends every tool_result as its own user message. What should change to cut the latency?",
+  options:["Set disable_parallel_tool_use to false in tool_choice on each request it sends",
+    "Ask Claude in the system prompt to request all of the lookups in a single response",
+    "Stream the responses so that the user sees each tool call as soon as it is chosen",
+    "Send all tool_result blocks in one user message, and run the calls concurrently"],
+  correct:[3],
+  explanation:"Results sent in separate messages make the conversation read as one tool at a time, a common reason Claude makes fewer parallel calls; one message with all results keeps it parallel, and running the calls in threads overlaps their waits. false is already the default (A). A prompt request (B) fights the history the loop builds. Streaming (C) improves perceived latency, not the number of round trips." },
+{ id:"d2-p11", domain:2, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A support assistant shows \"thinking...\" for about eight seconds before each answer; most of that time Claude is choosing a tool and writing its input. The team wants the screen to say \"Looking up project...\" as early as possible, without changing the rest of the tool loop. What should it do?",
+  options:["Stream the request, parse each input_json_delta, and show the tool once its input parses",
+    "Keep the request unstreamed, and show the status once the response's stop_reason is tool_use",
+    "Stream the request, show the tool's name on content_block_start, then use get_final_message",
+    "Stream the request, and show the tool's name once message_stop arrives for that response"],
+  correct:[2],
+  explanation:"A streamed tool call opens with content_block_start carrying the tool's name, before its input arrives in pieces; stream.get_final_message() then returns the same object as create(), so the loop is unchanged. Waiting for the input (A), the finished response (B) or message_stop (D) shows the status later." }
 ]);

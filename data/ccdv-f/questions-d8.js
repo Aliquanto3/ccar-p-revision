@@ -1,4 +1,4 @@
-// CCDV-F Revision — Domain 8: Tools and MCPs (10.6%) — 17 items
+// CCDV-F Revision — Domain 8: Tools and MCPs (10.6%) — 19 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d8-01", domain:8, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -136,5 +136,21 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
     "A resource, which the application attaches",
     "A tool, with readOnlyHint set to true on it"],
   correct:[0],
-  explanation:"Prompts are user-controlled templates, such as slash commands or menu options. Tools are model-controlled, whatever the description says (B, D). Resources are application-controlled context data (C)." }
+  explanation:"Prompts are user-controlled templates, such as slash commands or menu options. Tools are model-controlled, whatever the description says (B, D). Resources are application-controlled context data (C)." },
+{ id:"d8-p06", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An agent answers \"which engineers were under 70% utilization in June?\" by calling get_employee_hours once per engineer, one call per request. The run takes 42 requests and over a million input tokens; request 37 alone carries 47,905, of which 606 are tool definitions, system prompt and question. The lookups are independent. What cuts the most cost?",
+  options:["Prompt caching on the tool definitions, so that each later request reads them from the cache",
+    "Programmatic tool calling, so a script calls the tools and only its printout reaches Claude",
+    "Parallel tool calls, so that Claude asks for all the timesheets in a single response at once",
+    "A switch to Haiku for the whole run, so that each of the input tokens costs a lot less"],
+  correct:[1],
+  explanation:"99% of the late requests is earlier tool results sent again; with programmatic tool calling the timesheets stay with the script and Claude reads only its output (the course demo fell from about $2.29 to $0.07). Caching (A) targets the 1% that repeats. Parallel calls (C) still put all 40 results into context. A cheaper model (D) keeps the same token growth." },
+{ id:"d8-p07", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A loop runs three parallel tool calls in threads. When the permit service throws an exception, the loop stops and the two successful results are lost. The agent should keep going and adapt. What should the tool runner do?",
+  options:["Catch the exception, and drop that call's tool_result so that only the two successful results are sent back",
+    "Catch the exception, and return a tool_result for that call with is_error set and a useful message",
+    "Let the exception stop the loop, and rerun the whole turn from the beginning after a short wait",
+    "Catch the exception, and return an empty tool_result for that call so the request stays valid"],
+  correct:[1],
+  explanation:"Each tool_use needs a tool_result, and a failure goes back as one with is_error: true and a message saying what went wrong and what to try next. Dropping it (A) makes the next request invalid. Rerunning the turn (C) repeats the two good calls. An empty result (D) reads as valid data." }
 ]);

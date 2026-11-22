@@ -249,6 +249,14 @@ window.NOTES["ccdv-p"] = {
         "Before raising a cap: is usage the symptom (change settings) or was the cap set too low (re-base it)? Review caps on a cadence in both directions — monthly by default, tighter early in a rollout.",
         "Reading spend: dashboard (trends, Groups view) · Analytics chat (ad-hoc questions) · Analytics API (programmatic, by group, for chargeback; Primary Owner key) · Spend Limits API sets per-member caps · spend CSV is per member."
       ]},
+      { title: "Module 8 — model, effort and tool-loop costs", points: [
+        "Model per task: a 20–30 example eval per task from real inputs, run from the cheapest tier up, stop at the cheapest output you would ship; route tasks to different tiers inside one endpoint. (Course rule; the docs name Opus 5.5 as the general default.)",
+        "Effort sets how hard the model works, not what it knows. Too low → correct work that stops short (one reply). Too high → overthinking, extra tasks, cost (a pattern). Adjust one level at a time; change model only if effort does not fix it; on a new model restart at its default.",
+        "Claude Code effort order: CLAUDE_CODE_EFFORT_LEVEL > skill/subagent frontmatter (while running) > level set in the session (/effort, /model; --effort for one run) > effortLevel in settings (low–xhigh) > model default (/effort auto). max is session-only unless set by env var; an Enterprise cap trims every layer. Ultracode = xhigh + dynamic multi-agent workflows, not an effort level.",
+        "Tool loops resend everything: print usage.input_tokens per request. Results piling up → programmatic tool calling (code execution tool, allowed_callers naming code_execution_20260120+, send the container ID back, describe each result's shape; not with strict tools, disable_parallel_tool_use or forced tool_choice; fits independent lookups). Big repeated tool list → cache_control on the last tool.",
+        "With caching, input_tokens excludes the cached prefix: true input = input_tokens + cache_read_input_tokens + cache_creation_input_tokens.",
+        "Latency: run every tool_use of a response, concurrently when independent, and return all tool_results in one user message (separate messages teach Claude to call one at a time); failures as is_error results. Streaming: show the tool's name on content_block_start; get_final_message() keeps the loop unchanged."
+      ]},
       { title: "Foundations refresher — caching, batches, effort, model choice", points: [
         "Cache prefix order tools → system → messages: any tool change (order included) invalidates all; tool_choice and images invalidate system + messages. Put per-request content (timestamps, the new message) after the last breakpoint.",
         "Both cache fields at 0 = not cached, often below the minimum length (512 tokens on current models). No error is returned.",
