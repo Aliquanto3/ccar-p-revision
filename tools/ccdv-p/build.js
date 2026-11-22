@@ -6,21 +6,32 @@ const fs = require('fs'), path = require('path');
 const root = path.join(__dirname, '..', '..');
 global.window = {}; require(path.join(root, 'data', 'certs.js'));
 const D = window.CERTS['ccdv-p'].domains, L = 'ABCDE';
-const target = [2, 1, 3, 0, 2, 3, 1, 0, 3, 1, 2, 0, 1, 3, 2, 0];
+// Target key positions, cycled per module: single-select keys, then select-2 key pairs.
+const targetSingle = [2, 1, 3, 0, 2, 3, 1, 0, 3, 1, 2, 0, 1, 3, 2, 0];
+const targetPairs = [[1, 3], [0, 4], [2, 3], [1, 4], [0, 2], [3, 4], [1, 2], [0, 3], [2, 4]];
 const srcDir = path.join(__dirname, 'src');
 const items = [];
+// Rewrite option letters cited in parentheses, e.g. "(B)" or "(B, D)", using old→new index map.
+const remapLetters = (text, newIdx) => text.replace(/\(([A-E](?:\s*,\s*[A-E])*)\)/g, (_, list) =>
+  '(' + list.split(/\s*,\s*/).map(c => L[newIdx[L.indexOf(c)]]).sort().join(', ') + ')');
+function place(q, wantKeys) {
+  const n = q.options.length, keys = [...q.correct].sort((a, b) => a - b);
+  const others = [...q.options.keys()].filter(i => !keys.includes(i));
+  const order = new Array(n); // order[newPos] = oldIndex
+  wantKeys.forEach((pos, j) => { order[pos] = keys[j]; });
+  let k = 0;
+  for (let pos = 0; pos < n; pos++) if (order[pos] === undefined) order[pos] = others[k++];
+  const newIdx = []; order.forEach((old, pos) => { newIdx[old] = pos; });
+  q.options = order.map(i => q.options[i]);
+  q.correct = keys.map(i => newIdx[i]).sort((a, b) => a - b);
+  q.explanation = remapLetters(q.explanation, newIdx);
+}
 for (const f of fs.readdirSync(srcDir).filter(f => /^m\d+\.js$/.test(f)).sort()) {
-  let rr = 0;
+  const mod = parseInt(f.slice(1), 10); let rs = 0, rm = (mod - 1) * 3; // offset pairs per module so they do not repeat
   for (const q of require(path.join(srcDir, f))) {
-    if (q.source !== 'exam-guide-sample' && q.type === 'single') {
-      const want = target[rr++ % target.length], k = q.correct[0];
-      if (want !== k) {
-        const order = [...q.options.keys()];
-        [order[k], order[want]] = [order[want], order[k]];
-        q.options = order.map(i => q.options[i]);
-        q.correct = [want];
-        q.explanation = q.explanation.replace(/\(([A-D])\)/g, (_, c) => '(' + L[order.indexOf(L.indexOf(c))] + ')');
-      }
+    if (q.source !== 'exam-guide-sample') {
+      if (q.type === 'single') place(q, [targetSingle[rs++ % targetSingle.length]]);
+      else if (q.correct.length === 2 && q.options.length === 5) place(q, targetPairs[rm++ % targetPairs.length]);
     }
     items.push(q);
   }

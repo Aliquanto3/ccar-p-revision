@@ -38,6 +38,22 @@ for(const q of Q){
     }
   }
   if(kHas(JARGON)&&!dHas(JARGON)) flag(q,'R6-register');
+  // R7 — option isolée par son attaque : premier mot de la clé absent des distracteurs alors que des distracteurs partagent le leur
+  if(q.type==='single'){
+    const lead=o=>o.trim().split(/[\s,]+/)[0].toLowerCase();
+    const dl=opts.filter((_,i)=>!isK(i)).map(lead);
+    if(!dl.includes(lead(opts[K[0]])) && dl.some((w,i)=>dl.indexOf(w)!==i)) flag(q,'R7-odd-lead');
+  }
+  // R8 — l'explication cite une lettre de la clé parmi les options rejetées (bug de permutation)
+  const L='ABCDE', keyL=K.map(i=>L[i]);
+  if((q.explanation||'').match(/\(([A-E](?:\s*,\s*[A-E])*)\)/g)?.some(m=>keyL.some(k=>m.includes(k)))) flag(q,'R8-expl-letter');
+}
+// R9 — équilibre des positions de clé à l'échelle de la banque (avertissement, par certification)
+for(const c of certs){
+  const B=Q.filter(q=>q.id.startsWith(c+':'));
+  const multi=B.filter(q=>q.type==='multi'), pos=[0,0,0,0,0];
+  multi.forEach(q=>q.correct.forEach(i=>pos[i]++));
+  if(multi.length>=4 && pos.some(n=>n>multi.length*0.6)) console.log('R9-multi-positions ['+c+'] clés multi par position A-E:',pos.join('/'),'sur',multi.length,'items');
 }
 const ids=Object.keys(flags);
 const byRule={};

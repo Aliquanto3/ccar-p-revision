@@ -1,7 +1,7 @@
 // Module 3 — Observability and Production Monitoring (Compliance API, OpenTelemetry, retention,
 // closing the loop with control bands, Claude Tag, managing spend). Key written first; build.js rotates it.
-module.exports = [
 // ---------- visibility: Compliance API, OpenTelemetry, retention ----------
+module.exports = [
 { id:"d3-02", domain:3, type:"single", select:1, source:"generated",
   question:"Legal asks what exactly Claude answered in a member's chat two days ago. The security team routes Claude's audit logs to its SIEM and runs OpenTelemetry export for Cowork and Claude Code; the organization's Compliance API is enabled. Where should the answer come from?",
   options:["The Compliance API, which carries chat content alongside the audit log events",
@@ -46,11 +46,11 @@ module.exports = [
   question:"An organization without HIPAA readiness sets a custom retention window of 90 days. Which TWO kinds of records can the Compliance API still return after 90 days?",
   options:["Activity feed events from the period before the window",
     "Transcripts of cloud Cowork sessions started from claude.ai on the web",
-    "Transcripts of local Claude Code sessions on members' machines",
+    "Chats that members kept outside any project during that period",
     "Files that members uploaded to a shared project in that period",
     "Chats that members kept inside a project with its own instructions"],
   correct:[0,1],
-  explanation:"Activity feed events are kept six years regardless of the window, and remote session transcripts (Cowork sessions started on claude.ai web or mobile, running in the cloud) six years unless a member deletes them. Local Claude Code and Cowork transcripts follow a finite custom window (C), and chat, file and project content follows the window (D, E)." },
+  explanation:"Activity feed events are kept six years regardless of the window, and remote session transcripts (Cowork sessions started on claude.ai web or mobile, running in the cloud) six years unless a member deletes them. Chat, file and project content follows the window (C, D, E)." },
 { id:"d3-08", domain:3, type:"single", select:1, source:"generated",
   question:"An organization with HIPAA readiness enabled sets a custom retention window of one year. How long are transcripts of local Claude Code sessions available through the Compliance API?",
   options:["30 days from capture",
@@ -75,8 +75,6 @@ module.exports = [
     "An organization instruction telling Claude to refuse prompts that contain such content"],
   correct:[0],
   explanation:"Inference hooks send every prompt from Claude chat, Cowork and Claude Code to a server the security team or its vendor runs for an allow-or-deny decision before Claude answers, so content is blocked at the door. Retention (B) governs content after the fact and cannot go below 30 days, DLP on the Compliance API (C) detects after sending, and an instruction (D) is soft steering, not a control." },
-
-// ---------- closing the loop: control bands ----------
 { id:"d3-09", domain:3, type:"single", select:1, source:"generated",
   question:"A platform team wants Claude to respond automatically when post-deploy 5xx rates go abnormal. Its first design lets Claude read the dashboard every hour and decide whether the latest reading is abnormal. Detection results must be reproducible and auditable. What should change?",
   options:["A tested script computes mean and sigma bands, and starts Claude only on a breach",
@@ -150,8 +148,6 @@ module.exports = [
     "Claude replies with a summary and hands the ticket back to people"],
   correct:[0],
   explanation:"Claude Tag triages tagged work: a small, well-bounded fix arrives as a PR through the review gate, and anything larger, such as a cross-service schema change, is written up as intent.md for Stage 1: Plan. A single PR (B) skips planning, applying from the channel (C) bypasses the gates, and handing back (D) drops the loop." },
-
-// ---------- managing spend ----------
 { id:"d6-02", domain:6, type:"single", select:1, source:"generated",
   question:"The Platform group hits its spend cap in month two and requests an increase. The review shows most of its spend is the most capable model, at the default effort, producing routine pull-request summaries. Work volume must not drop. Which response fits the spend-governance guidance?",
   options:["Lower the default model for the role those members hold, and keep the cap where it is",
@@ -169,11 +165,11 @@ module.exports = [
   correct:[0],
   explanation:"The Analytics API pulls usage and cost programmatically into finance tooling and breaks them down by group; a Primary Owner generates its key. The Spend Limits API sets per-member caps (B), Analytics chat answers one-off questions (C), and the spend CSV is per member and must be joined to a group mapping (D)." },
 { id:"d6-04", domain:6, type:"single", select:1, source:"generated",
-  question:"Spend keeps climbing with no new members. Activity shows many Cowork scheduled tasks producing reports nobody opens. Members are on the unified Claude experience. Which action addresses the cause?",
-  options:["Ask members to review their scheduled tasks and delete the ones no one uses",
-    "Turn off \"Run Cowork in the cloud\" so that the scheduled tasks stop running",
-    "Add an organization instruction asking Claude to keep each report brief",
+  question:"Claude Enterprise spend keeps climbing with no new members. Activity shows many cloud scheduled tasks producing reports nobody opens, while several teams depend on their own scheduled reports. Members are on the unified Claude experience. Which action addresses the cause without stopping the useful tasks?",
+  options:["Ask members to review their scheduled tasks and delete the ones no one reads anymore",
+    "Turn off Scheduled tasks in organization settings so that remote scheduled runs stop",
+    "Disable \"Run Cowork in the cloud\" so that cloud sessions stop for those members",
     "Lower the organization's default effort so that each scheduled run costs less"],
   correct:[0],
-  explanation:"Scheduled tasks keep consuming on their cadence whether or not anyone reads the output; the fix is a member habit of reviewing and deleting unused tasks (with spend caps pausing a member at the limit). Members on the unified Claude experience run agentic work on Anthropic's infrastructure even with that setting off (B), and shorter reports or lower effort (C, D) trim the cost of work that should not run at all." }
+  explanation:"Scheduled tasks keep consuming on their cadence whether or not anyone reads the output; the fix is a member habit of reviewing and deleting unused tasks, with spend caps pausing a member at the limit. The Scheduled tasks setting (B) disables remote scheduled tasks for the whole organization, including the ones teams depend on. Members on the unified Claude experience run agentic work on Anthropic's infrastructure even with that Cowork setting off (C). Lower effort (D) trims the cost of runs that should not happen at all." }
 ];
