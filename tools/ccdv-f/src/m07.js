@@ -25,7 +25,7 @@ module.exports = [
     ".mcp.json with ${VAR} references",
     ".claude/agents/reviewer.md"],
   correct:[0,1],
-  explanation:"settings.local.json and CLAUDE.local.md are the personal, gitignored layer. The shared settings file (C), a .mcp.json that references secrets through environment variables (D), and subagent definitions (E) are what teammates should get on clone." },
+  explanation:"settings.local.json and CLAUDE.local.md are the personal layer kept out of git (Claude Code gitignores settings.local.json itself, CLAUDE.local.md is added to .gitignore by hand or by /init). The shared settings file (C), a .mcp.json that references secrets through environment variables (D), and subagent definitions (E) are what teammates should get on clone." },
 { id:"d2-30", domain:2, type:"single", select:1, source:"generated",
   question:"A requirement says the assistant must answer within two seconds for support agents in Singapore and Manila. The team measured 1.2 seconds from its Paris office with short test prompts, and agents report slow answers. How should the latency requirement be verified?",
   options:["Measure from the agents' region with real production-sized requests",
