@@ -32,11 +32,13 @@ const sameSet = (a, b) => a.length === b.length && [...a].sort().join() === [...
 
 /* ---------- theme ---------- */
 function initTheme() {
+  // Charte : sombre par défaut, clair selon le système ; le choix explicite de l'utilisateur prime.
   const saved = themeStore.get();
   if (saved) document.documentElement.dataset.theme = saved;
-  else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
   $("#theme-toggle").addEventListener("click", () => {
-    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    const current = document.documentElement.dataset.theme
+      || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    const next = current === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     themeStore.set(next);
   });
@@ -88,13 +90,14 @@ function questionCard(q, num, total, { showSource = true } = {}) {
     optsEl.querySelectorAll(".opt").forEach(o => {
       const i = Number(o.dataset.i);
       const isCorrect = q.correct.includes(i), wasPicked = userSel.includes(i);
-      if (isCorrect && wasPicked) o.classList.add("correct");
-      else if (isCorrect) o.classList.add("missed");
-      else if (wasPicked) o.classList.add("wrong");
+      const mark = (cls, label) => { o.classList.add(cls); o.insertAdjacentHTML("beforeend", `<span class="st">${label}</span>`); };
+      if (isCorrect && wasPicked) mark("correct", "✓ correct");
+      else if (isCorrect) mark("missed", "✓ expected");
+      else if (wasPicked) mark("wrong", "✗ your pick");
     });
     const ok = sameSet(userSel, q.correct);
     wrap.querySelector(".q-feedback").innerHTML = `
-      <div class="verdict ${ok ? "ok" : "err"}">${ok ? "Correct" : "Incorrect"}</div>
+      <div class="verdict ${ok ? "ok" : "err"}">${ok ? "✓ Correct" : "✗ Incorrect"}</div>
       <div class="explain">${esc(q.explanation)}</div>`;
     return ok;
   };
@@ -117,7 +120,7 @@ function viewHome(app) {
     </div>`).join("");
   app.innerHTML = `
     <p class="eyebrow">Exam code ${CERT.code} · ${esc(CERT.guide.label)}</p>
-    <h1>Revise for ${esc(CERT.name)}</h1>
+    <h1 class="filet">Revise for ${esc(CERT.name)}</h1>
     <div class="stat-line">
       <span>${EXAM.items} items</span><span>${EXAM.minutes} min</span><span>pass ≥ ${EXAM.pass} / ${EXAM.scaleMax}</span>
       <span>${esc(EXAM.note)}</span>${EXAM.fee && EXAM.fee !== "—" ? `<span>${esc(EXAM.fee)}</span>` : ""}<span>valid 12 months</span>

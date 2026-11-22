@@ -13,7 +13,7 @@ Static site — no build step, no backend, no dependencies. Works offline once l
 - **Practice mode** — instant feedback per question, filterable by domain, per-domain stats (localStorage)
 - **Mock exam** — questions drawn according to the official domain weights, timed, scaled score /1000 (pass ≥ 720), per-domain breakdown, full answer review
 - **Flashcards** and **cheat sheet** (print-friendly)
-- **Dark mode**, progress persistence per certification, zero tracking
+- **Dark-first design** following the [charte-generique](https://github.com/Aliquanto3/charte-generique) design system (tokens and OFL fonts served from `charte/`, no CDN), progress persistence per certification, zero tracking
 
 Links take the form `#/<cert>/<view>` (e.g. `#/ccdv-p/practice`); older links such as `#/practice` open the last certification used.
 

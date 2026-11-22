@@ -26,8 +26,8 @@ window.CERTS = {
     code: "CCDV-P",
     name: "Claude Certified Developer – Professional",
     storagePrefix: "ccdvp:",
-    guide: { label: "Exam Guide v1.0 (November 2026)", url: null },
-    officialPage: null,
+    guide: { label: "Exam Guide v1.0 (November 2026)", url: "https://cc.sj-cdn.net/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1794947325/Claude_Certified_Developer-Professional_Exam_Guide.pdf" },
+    officialPage: "https://anthropic-partners.skilljar.com/claude-certified-developer-professional-certification/489458",
     exam: { items: 70, minutes: 120, pass: 720, scaleMin: 100, scaleMax: 1000, fee: "$175", note: "60 scored + 10 unscored items · proctored (Pearson)" },
     targetBank: 240,
     domains: {
