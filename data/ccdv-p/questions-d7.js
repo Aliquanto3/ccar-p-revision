@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 7: Runtime Guardrails and Production Security (11%) — 22 items
+// CCDV-P Revision — Domain 7: Runtime Guardrails and Production Security (11%) — 26 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d7-01", domain:7, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -177,5 +177,37 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Keep bypassPermissions and copy the list to settings.json",
     "Keep allowedTools and set permissionMode to dontAsk"],
   correct:[3],
-  explanation:"allowedTools pre-approves the listed tools; unlisted ones fall through to the permission mode, where bypassPermissions approves them. dontAsk denies anything that would prompt, so only the listed tools (and calls that need no approval) run. Under bypassPermissions, canUseTool (A) is skipped for approved calls. acceptEdits (B) auto-approves writes. An allow list in settings.json (C) changes nothing for unlisted tools." }
+  explanation:"allowedTools pre-approves the listed tools; unlisted ones fall through to the permission mode, where bypassPermissions approves them. dontAsk denies anything that would prompt, so only the listed tools (and calls that need no approval) run. Under bypassPermissions, canUseTool (A) is skipped for approved calls. acceptEdits (B) auto-approves writes. An allow list in settings.json (C) changes nothing for unlisted tools." },
+{ id:"d7-23", domain:7, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A support assistant sometimes includes other customers' phone numbers in replies, when they appear in retrieved ticket history. The system prompt already forbids sharing personal data. Replies must not leak such data, even if the model slips. What should the team add?",
+  options:["A second sentence in the system prompt repeating that personal data must not be shared with users",
+    "An output check that detects and redacts personal data before the reply is sent, and logs each hit",
+    "A larger model for the assistant, which follows the instruction on personal data more reliably",
+    "An input check that blocks user questions mentioning phone numbers before the model sees them"],
+  correct:[1],
+  explanation:"A prompt is a probabilistic control; a deterministic output guardrail catches leaks the model lets through, and logging shows how often it fires. Repeating the rule (A) or a bigger model (C) stays probabilistic. The leaked data comes from retrieval, not from user questions (D); scoping retrieval to the current customer is the other layer." },
+{ id:"d7-24", domain:7, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An agent with tool access got stuck in a loop overnight, calling a search tool thousands of times and running up a large bill before anyone noticed. Unattended runs must stop on their own when they go wrong. What guardrail should the harness add?",
+  options:["A daily budget alert for the organization, sent by email to the on-call engineer each morning",
+    "An instruction in the system prompt telling the agent to stop if it repeats the same search",
+    "A rate limit on the search tool, slowing calls once a run makes more than a hundred an hour",
+    "A hard limit per run on turns, tool calls and spend that ends the run and raises an alert"],
+  correct:[3],
+  explanation:"Runaway loops need hard per-run bounds enforced by the harness, with an alert when one trips. A morning email (A) arrives after the spend. A prompt rule (B) relies on the looping model to notice. A rate limit (C) slows the loop but lets it run all night." },
+{ id:"d7-25", domain:7, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A coding agent's file-reading tool returns whole configuration files, and some contain database passwords and API keys, which then sit in the context and the logs. The agent needs the configuration structure, not the secret values. What should the team do?",
+  options:["Redact secret values in tool results before they reach the model, and keep them out of the logs",
+    "Tell the agent in its system prompt not to repeat any secret it reads in the files that it opens",
+    "Encrypt the logs at rest so that the secrets in the context are protected after the run",
+    "Remove the file-reading tool, and have engineers paste the configuration structure by hand"],
+  correct:[0],
+  explanation:"Secrets should not enter the context at all: redact them at the tool boundary, which also keeps them out of logs and transcripts. A prompt rule (B) leaves them in context, where an injection could extract them. Encryption (C) protects storage but not the model's context. Removing the tool (D) breaks the workflow." },
+{ id:"d7-26", domain:7, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A public chatbot faces frequent jailbreak attempts. The team wants to block most of them before they reach the main model, adding little latency, and to keep a record for review. Legitimate users must rarely be blocked. What should it add?",
+  options:["A list of banned phrases checked against each message, updated as new jailbreaks are reported",
+    "A second call to the main model on each message, asking it whether the message is a jailbreak",
+    "A fast input classifier before the main call, tuned on labeled traffic and logging each block",
+    "A stricter system prompt for the main model, with a paragraph listing known jailbreak patterns"],
+  correct:[2],
+  explanation:"A small, fast classifier screens inputs cheaply before the main model, and tuning it on labeled traffic controls false positives; logging supports review. Phrase lists (A) are easy to evade. A second large call (B) doubles latency and cost. A stricter prompt (D) is a single probabilistic layer." }
 ]);
