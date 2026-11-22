@@ -75,6 +75,10 @@ window.FLASHCARDS["ccdv-p"] = [
   { id: "v607", domain: 6, front: "Claude Code effort precedence", back: "Env var > skill/subagent frontmatter > session (/effort, --effort) > effortLevel setting > model default. Org cap trims all." },
   { id: "v608", domain: 6, front: "Programmatic tool calling — four changes", back: "Add the code execution tool · allowed_callers on callable tools · send the container ID back · describe each result's shape. Not with strict tools." },
   { id: "v609", domain: 6, front: "Parallel tool calls stay parallel when…", back: "All tool_results go back in one user message (one per tool_use, failures with is_error)." },
+  { id: "v113", domain: 1, front: "Agent survives a restart without duplicates", back: "Checkpoint per completed step, resume from it, idempotency keys on side-effecting calls." },
+  { id: "v114", domain: 1, front: "New policy mid-conversation, keep the cache", back: "Append it as a late message. Editing the system prompt or tools invalidates the cached prefix." },
+  { id: "v216", domain: 2, front: "RAG answer wrong — first check", back: "Was the passage with the answer retrieved? No: retrieval stage. Yes: generation stage." },
+  { id: "v217", domain: 2, front: "Exact part numbers retrieve look-alikes", back: "Add lexical search next to embeddings, rerank the merged results." },
   // D2 — Production Integration, Reliability, and Knowledge Grounding (module 1)
   { id: "v201", domain: 2, front: "Web search: what does your code NOT have to do, and why?", back: "Write a handler or send a tool_result. It is a server tool running on Anthropic's infrastructure; you add one entry to tools and get the finished answer back." },
   { id: "v202", domain: 2, front: "allowed_domains — four formatting rules", back: "Bare domain (no https://) · subdomains included · a specific subdomain restricts to it only · cannot be combined with blocked_domains in the same request (400)." },

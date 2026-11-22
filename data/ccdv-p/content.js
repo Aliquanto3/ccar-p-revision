@@ -41,6 +41,12 @@ window.NOTES["ccdv-p"] = {
         "Managed agents ship with caching and compaction on by default.",
         "Skills and subagents: a subagent does not see skills invoked in the main thread (a fork starts from a copy of the conversation). Built-ins (Explore, Plan) do not preload skills; custom subagents preload the skills in their skills field, in full, at startup — keep Skill in a restricted tools list to invoke unlisted ones."
       ]},
+      { title: "Orchestration, durability and architecture evolution", points: [
+        "Workers hand back compact fixed-format reports; full logs go to storage. Pipelines hand off through shared files (plan with acceptance criteria, result file), not transcripts or self-written summaries.",
+        "Durable runs: checkpoint after each completed step, resume from it, make side effects idempotent (idempotency keys). Pin the model per long session; new sessions take the evaluated version.",
+        "Let production data move the boundary: keep enumerable paths as a workflow, send the variable remainder to an agent; an agent whose traces show one fixed path becomes a workflow.",
+        "Context: large catalogs → defer tools and use tool search; mid-conversation policy → append a message (editing the system prompt or tools invalidates the cache); stale tool output → context editing + memory tool, compaction when the whole history can be summarized."
+      ]},
       { title: "Foundations refresher — Agent SDK and adaptive thinking", points: [
         "Agent SDK = Claude Code's loop, tools, permissions, sessions and hooks as a library in your process; Client SDK = you run the tool loop; Managed Agents = Anthropic hosts it.",
         "settingSources omitted = user + project + local (CLAUDE.md, settings, skills, hooks). [] = only what you pass in code. Managed settings, ~/.claude.json and auto memory load anyway → multi-tenant: own filesystem per tenant, settingSources [] and CLAUDE_CODE_DISABLE_AUTO_MEMORY=1.",
@@ -97,6 +103,12 @@ window.NOTES["ccdv-p"] = {
         "Tools for your own systems (you maintain them), skills for your processes, MCP for third-party services (the provider maintains the server).",
         "mcp_servers declares the connection (type url, url, name, optional authorization_token); a tools entry of type mcp_toolset with mcp_server_name grants access. Claude introspects the server: no schemas to write. Beta header mcp-client-2025-11-20.",
         "Restrict to a subset: default_config {enabled: false}, then enable named tools in configs (e.g. read-only search) — also keeps unused definitions out of context."
+      ]},
+      { title: "Grounding diagnosis and resilience at scale", points: [
+        "Diagnose retrieval failures stage by stage: was the answer's passage retrieved? No → retrieval (chunking, embeddings, hybrid lexical search for identifiers, reranking when recall@50 is fine but precision@5 is not). Yes → generation (prompt, assembly).",
+        "Grounded answers: only from passages, with citations the app can check, and an explicit not-found reply when sources lack the answer.",
+        "Multi-tenant throughput: per-tenant quotas at the gateway before the shared org limit, bulk work queued apart under backpressure.",
+        "Fallbacks across platforms respect feature parity: the fallback path builds requests its platform supports and is tested before an incident."
       ]},
       { title: "Foundations refresher — structured outputs, long requests, batches", points: [
         "JSON outputs = output_config.format {type: json_schema}; strict tool use = strict: true on a tool. Both can be combined, and work with batches and streaming.",
