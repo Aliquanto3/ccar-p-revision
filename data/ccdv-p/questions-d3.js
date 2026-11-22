@@ -2,7 +2,7 @@
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d3-01", domain:3, type:"single", select:1, difficulty:"hard", source:"generated",
-  question:"A platform engineer has rolled out a read-only claude -p step that triages failed builds and posts a summary to the pull request. The VP wants an early signal, within weeks, that the step reduces the load on engineers, without adding any data collection beyond what the tools already log. Which indicator fits best?",
+  question:"Until now, every failed build paged the on-call engineer. A platform engineer has rolled out a read-only claude -p step that triages failed builds, posts a summary to the pull request, and pages a human only when it cannot classify the failure. The VP wants an early signal, within weeks, that the step reduces the load on engineers, without adding any data collection beyond what the tools already log. Which indicator fits best?",
   options:["Change failure rate and lead time for changes, from the CI and deployment tooling",
     "Median time from a failed build to the first human comment, from the PR history",
     "Engineers' rating of each summary, from a short survey sent after each failure",
@@ -75,7 +75,7 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
   correct:[3],
   explanation:"Detection stays entirely deterministic, with no model involved: a version-controlled, unit-tested script computes the mean and sigma over a rolling window, applies drift rules, and invokes Claude according to the tier from version-controlled config. Any design that puts the model in the detection path (A, B, C) makes detection non-reproducible." },
 { id:"d3-10", domain:3, type:"single", select:1, difficulty:"hard", source:"generated",
-  question:"A steady metric is read hourly, about 720 readings a month, with roughly bell-shaped noise. A team proposes letting Claude open pull requests whenever a reading crosses 2σ. How many readings a month would cross 2σ from noise alone, the figure that decides the proposal?",
+  question:"A steady metric is read hourly, about 720 readings a month, with roughly bell-shaped noise. A team proposes letting Claude open pull requests whenever a reading crosses 2σ. How many readings a month would land above the mean plus 2σ from noise alone, the figure that decides the proposal?",
   options:["About one reading a month",
     "About 16 readings a month",
     "About 120 readings a month",
@@ -99,7 +99,7 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
   correct:[0],
   explanation:"With a flat baseline, sigma is near zero and every blip becomes a breach; a minimum sigma in the metric's units (MIN_SIGMA) fixes the cause and keeps band detection. A longer flat baseline (B) stays flat, and a higher multiple of a near-zero sigma (C) is still near zero, so blips keep tripping it. A fixed threshold (D) works but abandons the single band-based method the team keeps." },
 { id:"d3-13", domain:3, type:"multi", select:2, difficulty:"hard", source:"generated",
-  question:"An engineering director asks how the closing-the-loop play itself tells whether it is working on the 5xx metric. Which TWO measures does the play define?",
+  question:"An engineering director wants the closing-the-loop play's own success measures for the 5xx metric: one leading indicator showing that findings reach triage faster than post-mortem actions used to, and one lagging indicator showing that fixes stick. Which TWO measures are they?",
   options:["Time from a band breach to an intent.md in the triage queue",
     "Mean time to restore service after a breach, from incident tickets",
     "Share of 3σ breaches in which the rollback runbook was triggered",

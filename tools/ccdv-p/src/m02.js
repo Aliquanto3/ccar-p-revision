@@ -239,7 +239,7 @@ module.exports = [
   correct:[0],
   explanation:"A skill is versioned institutional knowledge: change it like code, with the policy owner signing off, and engineers pick up the new version in their next session. A managed-settings skill (B) would override it everywhere, beyond the one repository the policy covers. A CLAUDE.md line (C) splits the policy across two sources. A hook (D) is a good deterministic backstop but leaves the skill's text out of date." },
 { id:"d5-02", domain:5, type:"single", select:1, source:"generated",
-  question:"Before sharing a meeting-recap skill, an engineer runs skill-creator's evals. The first round shows the with-skill outputs are too wordy and skip the executive summary, while still beating the without-skill outputs. What should the next round do?",
+  question:"Before sharing a meeting-recap skill, an engineer runs skill-creator's evals. The first round shows the with-skill outputs are too wordy and skip the executive summary, while still beating the without-skill outputs. The engineer wants to know which instruction change fixed which problem. What should the next round do?",
   options:["Give feedback on the missing summary first, re-run the same prompts, then tackle wordiness",
     "Give feedback on both issues together so that one revision fixes them both in a single round",
     "Drop the without-skill outputs and compare each new version only against the last version",

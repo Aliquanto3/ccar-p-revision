@@ -140,7 +140,7 @@ module.exports = [
   correct:[0],
   explanation:"Each non-interactive run should act under the agent's own identity with short-lived credentials scoped to its environment, so the service's audit log separates agent actions from the engineer's. Pipeline log annotations (B) never reach the deployment service's audit log. A shared bot account (C) separates agent from human but is the long-lived shared secret security forbids. Per-call approval (D) still records the engineer as the actor." },
 { id:"d3-01", domain:3, type:"single", select:1, source:"generated",
-  question:"A platform engineer has rolled out a read-only claude -p step that triages failed builds and posts a summary to the pull request. The VP wants an early signal, within weeks, that the step reduces the load on engineers, without adding any data collection beyond what the tools already log. Which indicator fits best?",
+  question:"Until now, every failed build paged the on-call engineer. A platform engineer has rolled out a read-only claude -p step that triages failed builds, posts a summary to the pull request, and pages a human only when it cannot classify the failure. The VP wants an early signal, within weeks, that the step reduces the load on engineers, without adding any data collection beyond what the tools already log. Which indicator fits best?",
   options:["Share of pipeline failures triaged without paging a human, from the pipeline logs",
     "Change failure rate and lead time for changes, from the CI and deployment tooling",
     "Median time from a failed build to the first human comment, from the PR history",
