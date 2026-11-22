@@ -113,7 +113,7 @@ window.NOTES["ccdv-p"] = {
         "Key scope is chosen per key at creation: Primary Owner keys can cover the whole parent or one child organization; Owner keys cover their own organization.",
         "OpenTelemetry = how surfaces run (usage, performance), optional and complementary. Claude Code: operational by default, prompt logging is an opt-in. Cowork (current Desktop): metadata only unless the otlpContentCapture device policy adds content; metadata always includes member emails and folder paths → filter in the collector.",
         "Retention: default = kept indefinitely; custom window ≥ 30 days, no zero option; organization-wide (a chat in a project follows the project's window). Shortening later deletes history for good.",
-        "Exceptions: activity feed 6 years regardless · remote (cloud) Cowork session transcripts 6 years unless deleted · local Cowork / Claude Code transcripts = custom window, or 6 years if none, or 30 days from capture with HIPAA readiness.",
+        "Exceptions: activity feed 6 years regardless · remote (cloud) session transcripts have no default period: kept until the member deletes them, except cloud sessions Claude started from a chat, deleted with that chat (the course says “6 years”; the compliance docs say no default period) · local Cowork / Claude Code transcripts = finite custom window (chats or all data), else 6 years from capture; with HIPAA readiness 30 days from capture, or the custom window if shorter.",
         "Inference hooks: every prompt from chat, Cowork and Claude Code goes to the security team’s server for allow-or-deny before Claude answers — block at the door instead of governing after the fact."
       ]},
       { title: "Closing the loop — control bands", points: [

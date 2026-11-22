@@ -108,7 +108,7 @@ module.exports = [
   correct:[0],
   explanation:"The agent is the reusable definition; a session is one run in one environment, and each session gets its own sandbox, so one session per ticket gives parallelism and isolation. One long session (B) serializes tickets in a shared context, a session cannot span several environments (C), and a prompt template (D) eases edits but keeps the pile of duplicate agent definitions." },
 { id:"d1-14", domain:1, type:"single", select:1, source:"generated",
-  question:"A managed agent's cloud environment uses limited networking. The agent now installs packages; some exist only on the company's package mirror and others only on the public npm registry. Security wants the sandbox to reach those two hosts and nothing else at every step. How should the environment be configured?",
+  question:"A managed agent's cloud environment uses limited networking. The agent now installs packages at run time with npm; some exist only on the company's package mirror and others only on the public npm registry. Security wants the sandbox to reach those two hosts and nothing else at every step. How should the environment be configured?",
   options:["Keep networking limited and list the mirror and the npm registry hosts in allowed_hosts",
     "Keep networking limited and list only the mirror, pointing each package install at that mirror",
     "Switch networking to unrestricted and name the two allowed hosts in the system prompt",
