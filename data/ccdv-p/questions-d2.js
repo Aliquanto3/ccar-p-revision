@@ -93,7 +93,7 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d2-12", domain:2, type:"single", select:1, difficulty:"hard", source:"generated",
   question:"In the production deployment setup, release is gated by the release manager's hook. A reviewer proposes gating rollback behind the same hook for symmetry. The closing-the-loop control must restore service within minutes of a breached control band, at any hour, and the rollback path must be proven before it is needed. Which policy fits?",
   options:["Gate rollback behind the release manager's hook, and exercise it in staging",
-    "Keep rollback as a runbook the on-call engineer runs by hand when paged",
+    "Keep rollback as a runbook that the on-call engineer runs by hand when paged",
     "Keep rollback pre-approved in production, and exercise it regularly in staging",
     "Pre-approve rollback in business hours, and gate it behind the hook at night"],
   correct:[2],
