@@ -2,7 +2,8 @@
 // Synthesized from the public Exam Guide v1.0 blueprint (Section 6) and the
 // learning objectives of the five official prep courses. No proprietary course content.
 
-window.DOMAIN_NOTES = {
+window.NOTES = window.NOTES || {};
+window.NOTES["ccar-p"] = {
   1: {
     tagline: "Translate an ambiguous business problem into a defensible Claude architecture.",
     examTasks: [
@@ -263,7 +264,8 @@ window.DOMAIN_NOTES = {
   }
 };
 
-window.CHEATSHEET = [
+window.CHEATSHEET = window.CHEATSHEET || {};
+window.CHEATSHEET["ccar-p"] = [
   { title: "Exam logistics", rows: [
     ["Items / time", "63 questions · 120 minutes · multiple-choice & multiple-response (each item states how many to select)"],
     ["Scoring", "Scaled 100–1000 · pass ≥ 720 · criterion-referenced (vs a fixed standard, not other candidates)"],

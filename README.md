@@ -1,33 +1,32 @@
-# CCAR-P Revision
+# Claude certifications — Revision
 
-Unofficial revision site for the **Claude Certified Architect – Professional (CCAR-P)** certification exam.
+Unofficial revision site for two Anthropic certifications, switchable from the top bar:
+
+- **CCAR-P** — Claude Certified Architect – Professional (63 items, 7 domains)
+- **CCDV-P** — Claude Certified Developer – Professional (70 items incl. 10 unscored, 8 domains) — *bank in progress, filled module by module*
 
 Static site — no build step, no backend, no dependencies. Works offline once loaded, and directly from the filesystem (`file://`).
 
-## Features
+## Features (per certification)
 
-- **Domain notes** — one revision sheet per blueprint domain: official exam objectives, key concepts, classic traps
-- **Practice mode** — instant feedback per question, filterable by domain, with per-domain stats (localStorage)
-- **Mock exam** — 63 questions drawn according to official domain weights, 120-minute timer, scaled score /1000 (pass ≥ 720), per-domain breakdown, full answer review
-- **Flashcards** — 43 cards with flip animation, "got it" tracking
-- **Cheat sheet** — dense decision tables for last-mile review (print-friendly)
-- **Dark mode**, progress persistence, zero tracking
+- **Domain notes** — official exam objectives per blueprint domain, key concepts, classic traps
+- **Practice mode** — instant feedback per question, filterable by domain, per-domain stats (localStorage)
+- **Mock exam** — questions drawn according to the official domain weights, timed, scaled score /1000 (pass ≥ 720), per-domain breakdown, full answer review
+- **Flashcards** and **cheat sheet** (print-friendly)
+- **Dark mode**, progress persistence per certification, zero tracking
 
-## Question bank
+Links take the form `#/<cert>/<view>` (e.g. `#/ccdv-p/practice`); older links such as `#/practice` open the last certification used.
 
-452 original questions (448 exam-scored + 4 partner-track items excluded from the mock exam), including a 215-item hard set of multi-constraint scenarios. The mock exam offers three modes: Easy (core questions only), Hard (hard set only), and Medium (an even per-domain mix) across the 7 blueprint domains, proportional to official exam weights:
+## Question bank — hard level only
 
-| Domain | Weight | Questions |
+Only multi-constraint scenario items ("hard" level) are served: they are the closest to the real exam. The former CCAR-P "core" items (231, including the 4 partner-track items) are archived in `archive/ccar-p-core/` and no longer loaded.
+
+| Cert | Live items | Notes |
 |---|---|---|
-| D1 Solution Design & Architecture | 17% | 75 |
-| D2 Models, Prompting & Context | 13% | 58 |
-| D3 Integration | 19% | 84 |
-| D4 Evaluation, Testing & Optimization | 16% | 67 |
-| D5 Governance, Safety & Risk | 14% | 64 |
-| D6 Stakeholder Communication & Lifecycle | 14% | 66 (+4 partner-track) |
-| D7 Developer Productivity & Enablement | 7% | 34 |
+| CCAR-P | 217 | 214 hard + 3 official Exam Guide samples |
+| CCDV-P | 18 | 3 official samples + 15 items from module 1 (D2 mainly) — target ~240 |
 
-The bank was independently reviewed against the official exam guide and Anthropic documentation (item-writing flaws, cue biases, duplicates). Three questions are the official samples published in the public Exam Guide (flagged `exam-guide-sample`). Everything else is original material written from the public blueprint and course catalog objectives.
+Every generated item passes the anti-cue linter (`node tools/lint-cues.js --cert ccdv-p`, rules R1–R6: no justification clauses in options, no absolutes in distractors only, symmetric punctuation / enumeration / register, option lengths within ±15 % of the median). Official samples (`exam-guide-sample`) are excluded from the lint and never edited.
 
 ## Run locally
 
@@ -43,14 +42,14 @@ Optionally serve it: `python3 -m http.server` then http://localhost:8000.
 
 ## Contributing questions
 
-Questions live in `data/questions-d1.js` … `questions-d7.js` (one file per domain). Add an object to the relevant file:
+Questions live in `data/<cert>/questions-dN.js` (one file per domain; certifications are declared in `data/certs.js`). Add an object to the relevant file:
 
 ```js
 { id:"d3-49",            // unique: d<domain>-<number>
-  domain:3,              // 1–7
+  domain:3,              // 1–7 (CCAR-P) or 1–8 (CCDV-P)
   type:"single",         // "single" (4 options) or "multi" (5 options)
   select:1,              // how many answers to select (matches correct.length)
-  difficulty:"core",     // "core" or "hard"
+  difficulty:"hard",     // only hard items are served
   source:"generated",    // never remove the exam-guide-sample flag from official items
   question:"…",
   options:["…","…","…","…"],
@@ -58,12 +57,12 @@ Questions live in `data/questions-d1.js` … `questions-d7.js` (one file per dom
   explanation:"Why the right answer is right AND why the tempting distractors are wrong." }
 ```
 
-Quality bar: every question needs at least one genuinely plausible distractor, and the explanation must address it. Keep correct-answer positions varied.
+Quality bar: every distractor is a position a competent practitioner could hold, the explanation addresses each one, key positions vary, and `node tools/lint-cues.js` returns 0 flags.
 
 ## Disclaimers
 
 - **Unofficial study aid.** Not affiliated with, endorsed by, or approved by Anthropic. "Claude" is a trademark of Anthropic, PBC.
-- Question content is original, written from the **publicly available** Exam Guide and course catalog descriptions. It reproduces no proprietary course or exam content. Real exam questions differ.
+- Question content is original, written from the **publicly available** Exam Guides, course material and Anthropic documentation. It reproduces no proprietary course or exam content. Real exam questions differ.
 - Exam logistics (fees, retake policy, passing score) can change — always verify against the official Exam Guide before booking.
 
 ## License
