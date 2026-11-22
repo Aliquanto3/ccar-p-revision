@@ -240,7 +240,7 @@ window.NOTES["ccdv-f"] = {
       ]},
       { title: "Choosing the customization", points: [
         "CLAUDE.md for always-on rules · skill for task-specific procedures loaded on description match (disable-model-invocation for explicit-only) · hook for must-happen actions · MCP for reusable integrations · custom tool when no server fits.",
-        "Skills on the Messages API need the code-execution and skills beta headers and run in a container: no local files or tools."
+        "Skills on the Messages API: passed in the container parameter with the code execution tool (no beta header needed any more); they run in the code execution container, with no network and no local files or tools."
       ]}
     ],
     pitfalls: [

@@ -98,10 +98,10 @@ module.exports = [
   explanation:"Permission rules can name one MCP tool (mcp__server__tool): allow the one that should run freely and deny the dangerous ones, leaving the rest to prompt. A server-wide allow (B) approves merges too. A server-wide deny (C) blocks create_issue as well, since deny wins. A prompt rule (D) is not enforced." },
 { id:"d8-11", domain:8, type:"single", select:1, source:"generated",
   question:"A team wants the review-checklist skill it uses in Claude Code to also run inside a backend service that calls the Messages API. Locally, one step of the skill runs a shell script from the repository. What must the team do?",
-  options:["Send the code-execution and skills beta headers, and rewrite the steps to avoid local files",
+  options:["Pass the skill in the container parameter with the code execution tool, and drop local file steps",
     "Place SKILL.md in the service's .claude/skills folder, as the API loads it from disk",
     "Pass settingSources with project in the Messages API request so that the skill is loaded",
     "Paste the full SKILL.md into the system prompt, which keeps the shell step working there"],
   correct:[0],
-  explanation:"On the Messages API, skills need the code-execution and skills beta headers and run in Anthropic's code execution container, so steps cannot rely on local files or tools. Filesystem discovery (B) is how Claude Code loads skills. settingSources (C) is an Agent SDK option. Pasting the text (D) gives no shell to run the script." }
+  explanation:"On the Messages API, skills are passed in the container parameter and need the code execution tool; the Skills API no longer needs a beta header. They run in the code execution container (no network, pre-installed packages only), so steps cannot rely on local files or tools. Filesystem discovery (B) is how Claude Code loads skills. settingSources (C) is an Agent SDK option. Pasting the text (D) gives no shell to run the script." }
 ];
