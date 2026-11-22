@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 2: Production Integration, Reliability, and Knowledge Grounding (20%) — 13 items
+// CCDV-P Revision — Domain 2: Production Integration, Reliability, and Knowledge Grounding (20%) — 15 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d2-01", domain:2, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -105,5 +105,21 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "One user message holding a tool_result block for each tool_use block, each tied to its id",
     "The results through the SDK's tool runner, which sends them back for the loop on its own"],
   correct:[2],
-  explanation:"Every tool_use block of the assistant turn needs its tool_result, tied by tool_use_id, and they go back together in the next user message. Disabling parallel tool use (A) works but adds a turn per call, against the latency goal. Separate user messages (B) leave the first follow-up missing a result, which is the failure observed. The tool runner (D) handles the loop correctly but replaces the hand-written loop the team must keep." }
+  explanation:"Every tool_use block of the assistant turn needs its tool_result, tied by tool_use_id, and they go back together in the next user message. Disabling parallel tool use (A) works but adds a turn per call, against the latency goal. Separate user messages (B) leave the first follow-up missing a result, which is the failure observed. The tool runner (D) handles the loop correctly but replaces the hand-written loop the team must keep." },
+{ id:"d2-14", domain:2, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An application uses the Messages API's MCP connector to give Claude a Slack MCP server that exposes dozens of tools, including posting and deleting messages. Claude must be able to search messages and list channels only, the unused tool definitions should stay out of context, and the team does not want to maintain its own Slack integration. How should the mcp_toolset be configured?",
+  options:["Set default_config enabled to false, and enable search_messages and list_channels in configs",
+    "Keep all tools enabled, and tell Claude in the system prompt not to post or delete any messages",
+    "Remove the mcp_toolset entry, and keep only the server declaration in mcp_servers",
+    "Replace the server with two custom tools that call Slack's search and channel APIs"],
+  correct:[0],
+  explanation:"Disable everything by default with default_config, then enable the specific tools in configs: Claude can search and list but not post or delete, and the other definitions stay out of context. A prompt rule (B) is advisory and keeps every definition in context. Without an mcp_toolset entry (C) Claude gets no tools from the server. Custom tools (D) work but bring back the integration code MCP leaves to the provider." },
+{ id:"d2-15", domain:2, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An agent must read tasks from Asana, query the company's internal claims database, and write reports in the team's standard template. The team wants to maintain as little integration code as possible. How should each need be met?",
+  options:["Asana through a custom tool, the database through an MCP server, the template as a skill",
+    "Asana through its MCP server, the database through a custom tool, the template as a skill",
+    "Asana through its MCP server, the database through an MCP server, the template as a tool",
+    "Asana through a custom tool, the database through a custom tool, the template in a prompt"],
+  correct:[1],
+  explanation:"Tools are for your own systems (you own and maintain the code), skills for your processes such as a report template, and MCP for third-party services whose provider maintains the server. A custom Asana tool (A, D) means maintaining a wrapper Asana already provides. The template is a procedure, not an integration, so a tool (C) is the wrong feature for it." }
 ]);

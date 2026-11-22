@@ -85,6 +85,11 @@ window.NOTES["ccdv-p"] = {
         "Managed settings: with allowManagedHooksOnly the gate hook must live in managed settings; with allowManagedMcpServersOnly the deploy servers must be on the managed allowlist.",
         "Each non-interactive run acts under the agent's own identity, so the pipeline log separates the agent's actions from the engineer who triggered it.",
         "Measure: leading = share of pipeline failures triaged without paging a human; lagging = DORA metrics already emitted by CI and deployment tooling."
+      ]},
+      { title: "MCP connector in the Messages API", points: [
+        "Tools for your own systems (you maintain them), skills for your processes, MCP for third-party services (the provider maintains the server).",
+        "mcp_servers declares the connection (type url, url, name, optional authorization_token); a tools entry of type mcp_toolset with mcp_server_name grants access. Claude introspects the server: no schemas to write. Beta header mcp-client-2025-11-20.",
+        "Restrict to a subset: default_config {enabled: false}, then enable named tools in configs (e.g. read-only search) — also keeps unused definitions out of context."
       ]}
     ],
     pitfalls: [
@@ -142,6 +147,21 @@ window.NOTES["ccdv-p"] = {
     examTasks: [
       "Complex failure diagnosis — multi-turn, multi-agent and non-deterministic failures; isolate model output vs harness vs tools vs data, including refusals and retrieval-grounding failures",
       "Incident response and learning loops — triage, mitigation, rollback, communication; convert incidents into regression evaluations, monitoring coverage and postmortem findings"
+    ],
+    sections: [
+      { title: "Tool misuse — fix the definition first", points: [
+        "Claude never sees the function, only the definition you send and the results you return: when it misuses a tool, look at the definition first.",
+        "Four parts: name · description (does the most work) · input_schema (each parameter with type and its own description, required list) · input_examples (optional; each must be valid against the schema or the API returns 400).",
+        "Description: at least 3–4 sentences covering what the tool does, when to use it and when not (naming the alternative tools), what each parameter means, what it does not return.",
+        "Overlapping thin tools confuse selection: combine them into one tool with a parameter (e.g. fields), keep tools that do different jobs. Meridian: 6 thin tools 14/30 → 3 consolidated 26/30, same model.",
+        "Wrong tool or too many calls → change the description (and merge overlaps). Wrong type or format → change the parameter description and add input_examples. Change only the part at fault, then rerun the eval.",
+        "Measure with an eval: fixed labeled questions, run on the same model before and after, scored on tool calls."
+      ]}
+    ],
+    pitfalls: [
+      "Fixing a format error in the tool description instead of the schema and examples.",
+      "Lengthening descriptions of tools that overlap instead of merging them.",
+      "Changing model and tool definitions in the same comparison."
     ]
   },
   5: {
@@ -150,6 +170,24 @@ window.NOTES["ccdv-p"] = {
       "Evaluation system design — golden sets, regression suites, behavioral checks, CI/CD gates, retrieval precision and groundedness metrics, release criteria; keep suites valid against contamination, saturation and coverage gaps",
       "LLM-as-judge engineering — calibration against human labels, rubric design, bias and position effects, inter-rater reliability, judge drift across model versions",
       "Online quality measurement — live-traffic sampling, A/B tests, feedback loops, metrics matched to task type (extraction, generation, agentic, retrieval-grounded)"
+    ],
+    sections: [
+      { title: "Continuous evals in CI", points: [
+        "Evals are the AI-native stage gate: the suite runs non-interactively in CI on a schedule and on any change to CLAUDE.md, skills or hooks (paths CLAUDE.md, .claude/**, evals/**), because that configuration steers the agent.",
+        "Build the suite from 20–50 real tasks with accepted outcomes; each eval = prompt + checks (tests pass, lint clean, behavior unchanged, policy followed). Each production incident gets an eval, written by the team that owned it.",
+        "Each eval starts from an older commit (from), in a scratch worktree, with evals/ removed from the checkout and the branch's CLAUDE.md and .claude/ copied in: old code, new configuration.",
+        "Do not use --bare here: it speeds headless runs by skipping CLAUDE.md, skills and hooks, the very files under test.",
+        "The checker runs from a copy made before any run, fails runs that changed files outside may_change (Git-ignored files excepted), and fails results that are empty or not is_error false.",
+        "Prefer behavioral checks (call the code with synthetic data, inspect logs) over checks on how the code is written; a policy script on pii-tagged fields missed a free-text field.",
+        "Gate configuration changes on the pass rate as a merge check (all-pass in the example; a 20–50 suite may set a lower threshold); log runs to compare over time. Live suite: replace cases that stop discriminating as models improve.",
+        "Measure: leading = pass rate over time and incident → eval time; lagging = regressions caught in CI vs found in production."
+      ]}
+    ],
+    pitfalls: [
+      "Running the eval suite with --bare.",
+      "Letting a run pass after editing the Makefile or the checks.",
+      "Grading code that never changed because the run ended in an error.",
+      "Keeping a suite that passes 100% forever as proof of quality."
     ]
   },
   6: {
@@ -193,13 +231,38 @@ window.NOTES["ccdv-p"] = {
         "A plugin runs code with your privileges; its hooks fire on every matching call. Read its hooks, agents and MCP servers before enabling it. Listed on a marketplace ≠ trusted (community = submitted by the author; official = curated separately).",
         "Components run alongside yours: hooks stack (both PreToolUse hooks fire); skills, agents and commands are namespaced /plugin-name:skill.",
         "A plugin's settings.json is honored for two keys only (agent, subagent status line). The agent key promotes one of its subagents — prompt, tools, model — to the main thread."
+      ]},
+      { title: "Hooks — deterministic control", points: [
+        "Events to know: PreToolUse (enforcement), PostToolUse (format, lint; too late to stop the call), Stop and SubagentStop (refuse to end the turn), PreCompact/PostCompact, InstructionsLoaded (audit what loaded), SessionStart (prime the environment; source startup or compact), UserPromptSubmit, Notification. /hooks shows a read-only list.",
+        "Exit codes: 0 = success (JSON on stdout parsed; plain text added to context only on SessionStart, UserPromptSubmit, UserPromptExpansion) · 2 = blocking, stderr fed to Claude · anything else, 1 included = non-blocking, the call runs. Notification and SessionStart ignore blocking.",
+        "PreToolUse JSON: permissionDecision allow | deny | ask (| defer, only for -p runs paused and resumed by a calling process), with permissionDecisionReason. updatedInput rewrites the call (e.g. redact a secret) but replaces the whole input: echo back unchanged fields.",
+        "Re-inject context after compaction with SessionStart + compact matcher, not PostCompact.",
+        "Approval gates: ask shows the reason to the person; deny shows it to Claude, so put the route to approval in it. Non-interactive runs deny any ask (allow the pipeline on main, where the merge is the approval). The gate must read records the agent cannot write.",
+        "Team hooks in .claude/settings.json (in Git, ${CLAUDE_PROJECT_DIR} for scripts); non-negotiable hooks in managed settings (with allowManagedHooksOnly, project hooks are blocked).",
+        "Measure gates: leading = waiting time per gate (hook decisions in the OTel export); lagging = gate violations reaching production."
+      ]},
+      { title: "Managed settings for a regulated enterprise", points: [
+        "permissions.deny keeps secrets out (Read(.env*)) and tool egress closed (WebFetch, curl, wget); permissions.allow pre-approves the inner loop (git, make build/test/lint) against prompt fatigue.",
+        "disableBypassPermissionsMode + allowManagedPermissionRulesOnly: no project file, flag or engineer can widen the rules.",
+        "sandbox: OS-level network allowedDomains blocks egress by any program; failIfUnavailable (refuse to start without it) and allowUnsandboxedCommands false (no retry outside). credentials: deny files like ~/.ssh, ~/.aws/credentials and strip env vars like GITHUB_TOKEN from sandboxed commands — permissions.deny only covers Claude's file tools.",
+        "allowManagedHooksOnly, allowManagedMcpServersOnly, disableSideloadFlags + strictKnownMarketplaces (plugins only from the approved marketplace), requiredMinimumVersion (assessed build floor)."
+      ]},
+      { title: "Connectors and multiplayer agents", points: [
+        "Three gates, all open for access: organization (Owner/Primary Owner adds the connector), role (per group, custom role's Connectors tab), member (connects their own account). Existing custom roles were set to Always allow; new roles start at Needs approval.",
+        "Per tool: Always allow / Needs approval / Blocked; blocking write and delete holds a connector read-only. Claude inherits the member's own permissions in the source system.",
+        "Read first; write per group when the workflow needs it, signed off by the data-risk owner. Enterprise-managed authorization (EMA) provisions the member gate through the IdP for supporting providers.",
+        "A multiplayer agent (e.g. Claude Tag) has its own identity and credentials, shared memory and shared context; the team decides what it can reach."
       ]}
     ],
     pitfalls: [
       "Treating a well-triggered skill as enforcement.",
       "Expecting exit code 2 of a PostToolUse hook to roll back the edit.",
       "Relying on an Edit|Write hook alone while Bash can rewrite files.",
-      "Assuming a plugin's hooks replace yours, or that a marketplace listing means vetted."
+      "Assuming a plugin's hooks replace yours, or that a marketplace listing means vetted.",
+      "Exiting 1 to block: the call still runs.",
+      "Returning partial updatedInput.",
+      "Using PostCompact to re-inject context.",
+      "Relying on permissions.deny to keep a sandboxed shell away from ~/.ssh or the network."
     ]
   },
   8: {
@@ -218,6 +281,12 @@ window.NOTES["ccdv-p"] = {
         "strictKnownMarketplaces (managed settings) limits the marketplaces people can add: entries such as {source: github, repo} or {source: url, url}.",
         "Skill as institutional knowledge: one policy, named owner, written source of truth; change the skill by PR with the owner's sign-off; engineers get it in their next session. Test that it triggers on differently phrased requests.",
         "Measure: leading = time from policy approval to skill merge; lagging = PR review findings citing the policy, trending to zero."
+      ]},
+      { title: "Permission modes and unattended runs", points: [
+        "Manual (reads only without asking) · Accept edits (reads, edits, common file system commands) · Plan (research, no edits) · Auto (classifier reviews most actions for intent) · Don't ask (reads in working dirs + pre-approved tools; anything that would prompt is denied) · Bypass permissions (no checks; only in isolated containers or VMs). Shift-tab cycles manual, accept edits, plan, auto.",
+        "Auto's classifier blocks production deploys and migrations, force pushes, piping downloads into a shell, sending sensitive data out, destroying pre-existing files; it checks intent, not correctness → pair it with a Stop hook running tests.",
+        "dontAsk for CI, scheduled jobs and batches with a known tool list; auto rather than bypass for unattended work whose actions cannot be listed.",
+        "Verify in proportion to how unsupervised the run was: start with the diff (/code-review, git diff, files outside the plan), not the summary; tests as a Stop hook gate, lint and type check as PostToolUse; headless runs by JSON result and exit code; a cold second opinion from a fresh session or subagent."
       ]}
     ],
     pitfalls: [

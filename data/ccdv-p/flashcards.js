@@ -2,6 +2,20 @@
 // Schema: {id, domain, front, back}
 window.FLASHCARDS = window.FLASHCARDS || {};
 window.FLASHCARDS["ccdv-p"] = [
+  // D4 / D5 / D7 / D8 — evals, tool definitions, guardrails (modules 4–5)
+  { id: "v401", domain: 4, front: "Claude passes the wrong format to a tool parameter: which part do you change?", back: "The parameter's own description (give the format) and input_examples. The tool description is for wrong tool choice." },
+  { id: "v402", domain: 4, front: "input_examples — the one rule", back: "Each example must be valid against the input_schema, or the API returns a 400 error." },
+  { id: "v501", domain: 5, front: "When does the agent eval suite run?", back: "On a schedule, and on any change to CLAUDE.md, skills or hooks (CLAUDE.md, .claude/**, evals/**)." },
+  { id: "v502", domain: 5, front: "Why never --bare in the eval workflow?", back: "It speeds headless runs by skipping CLAUDE.md, skills and hooks: the configuration under test." },
+  { id: "v503", domain: 5, front: "Three checker safeguards", back: "Run from a copy of the evals made before the run · fail changes outside may_change · fail empty results or is_error not false." },
+  { id: "v708", domain: 7, front: "Hook exit codes", back: "0 success (JSON parsed) · 2 blocking, stderr to Claude · anything else (1 included) non-blocking: the call still runs." },
+  { id: "v703", domain: 7, front: "updatedInput gotcha", back: "It replaces the whole input object: echo back every field you are not changing." },
+  { id: "v704", domain: 7, front: "Re-inject context after compaction", back: "SessionStart hook with the compact matcher (its stdout enters context), not PostCompact." },
+  { id: "v705", domain: 7, front: "Who sees an ask reason vs a deny reason?", back: "ask: the person running the session. deny: Claude — so name the route to approval. Non-interactive runs deny every ask." },
+  { id: "v706", domain: 7, front: "Why a sandbox on top of permissions.deny?", back: "deny rules cover Claude's tools; the OS-level sandbox blocks network egress and credential reads (files, env vars) by any shell program." },
+  { id: "v707", domain: 7, front: "The three connector gates", back: "Organization (connector added) · role (group allowed) · member (account connected; EMA provisions it through the IdP)." },
+  { id: "v803", domain: 8, front: "dontAsk vs auto vs bypass for unattended work", back: "dontAsk: known tool list (CI, schedules). auto: actions not listable, classifier checks intent. bypass: only isolated containers/VMs." },
+  { id: "v804", domain: 8, front: "Verifying an unsupervised run — where to start?", back: "The diff (/code-review, git diff, files outside the plan), not the summary; tests as a Stop hook; headless runs by JSON result and exit code." },
   // D3 / D6 — observability, control bands, spend (module 3)
   { id: "v301", domain: 3, front: "Compliance API vs audit logs vs OpenTelemetry", back: "Compliance API: what was said (content + audit events). Audit logs: who did what when (metadata only). OTel: how surfaces run (optional, operational)." },
   { id: "v302", domain: 3, front: "Why enable the Compliance API before members get access?", back: "Activity feed events and local session transcripts are captured only while it is on: a late start leaves gaps that cannot be filled." },

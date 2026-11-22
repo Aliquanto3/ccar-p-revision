@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 8: Agent Fleet Operations for Software Delivery (10%) — 8 items
+// CCDV-P Revision — Domain 8: Agent Fleet Operations for Software Delivery (10%) — 11 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d8-01", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -65,5 +65,29 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Claude opens one PR per service, each through the review gate",
     "Claude posts a plan in the thread and applies it on team approval"],
   correct:[0],
-  explanation:"Claude Tag triages tagged work: a small, well-bounded fix arrives as a PR through the review gate, and anything larger, such as a cross-service schema change, is written up as intent.md for Stage 1 (Plan). One PR (B) or one per service (C) skips planning for a change that is not small, and applying from the channel (D) bypasses the gates." }
+  explanation:"Claude Tag triages tagged work: a small, well-bounded fix arrives as a PR through the review gate, and anything larger, such as a cross-service schema change, is written up as intent.md for Stage 1 (Plan). One PR (B) or one per service (C) skips planning for a change that is not small, and applying from the channel (D) bypasses the gates." },
+{ id:"d8-09", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A nightly CI job runs claude -p to update generated API docs. It needs to read the repository, edit files under docs/, and run make docs; nobody watches the run. The job must never hang waiting for an approval, and must not do anything beyond that list. Which permission setup fits?",
+  options:["auto mode, so that a classifier reviews each of the actions before it is run",
+    "bypassPermissions mode on the CI runner, with the job's token scoped",
+    "acceptEdits mode, so file edits and common shell commands run freely",
+    "dontAsk mode with those tools pre-approved, so anything else is denied"],
+  correct:[3],
+  explanation:"dontAsk is for unattended runs: reads inside the working directories and the pre-approved tools run, and anything that would prompt is denied, so the job never hangs and stays within its list. Auto mode (A) lets through any action the classifier judges safe, beyond the list. bypassPermissions (B) skips all checks and belongs only in isolated containers or VMs. acceptEdits (C) runs edits and common file system commands freely, beyond the docs/ folder, and relies on prompts for anything else, with nobody there to answer." },
+{ id:"d8-10", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An engineer leaves a broad refactor running overnight in their development environment. The tools and commands it will need cannot be listed in advance, nobody will answer prompts, and the team wants a check on dangerous actions such as force pushes or production deploys while it runs. Which mode fits?",
+  options:["dontAsk mode, where anything not pre-approved is denied instead of prompting you",
+    "auto mode, where a classifier reviews most actions for danger before they run",
+    "bypassPermissions mode, where no prompt interrupts the run during the night",
+    "plan mode, where Claude researches and proposes changes without editing"],
+  correct:[1],
+  explanation:"For an unattended run at work whose actions cannot be listed in advance, keep auto mode rather than bypass: its classifier still reviews most actions for danger. dontAsk (A) fits runs whose tools are known; here it would deny the edits the refactor needs. bypassPermissions (C) skips every check and belongs only in isolated containers or VMs. plan mode (D) does not make the changes." },
+{ id:"d8-11", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An unattended run reports that it changed only the authentication module and that all tests passed. Before shipping, the engineer must find out what the run actually did, including any change outside the plan. Where should the check start?",
+  options:["With Claude's summary, compared line by line against the original plan",
+    "With the test report Claude quotes, checked against the test list in the plan",
+    "With /code-review and a read of git diff, including files outside the plan",
+    "With a new message asking Claude to list each file it changed overnight"],
+  correct:[2],
+  explanation:"Start with the diff, not the summary: run /code-review and read git diff yourself, the planned files first, then anything outside the plan. A tidy summary (A), a quoted test report (B) or a list Claude writes on request (D) are all Claude's account of the run, which is what the check must not rely on; tests are proven by a hook that gates the turn, and headless runs by their JSON result and exit code." }
 ]);
