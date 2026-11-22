@@ -335,6 +335,21 @@ window.NOTES["ccdv-p"] = {
         "dontAsk for CI, scheduled jobs and batches with a known tool list; auto rather than bypass for unattended work whose actions cannot be listed.",
         "Verify in proportion to how unsupervised the run was: start with the diff (/code-review, git diff, files outside the plan), not the summary; tests as a Stop hook gate, lint and type check as PostToolUse; headless runs by JSON result and exit code; a cold second opinion from a fresh session or subagent."
       ]},
+      { title: "Running a fleet: parallel work, verification, review (module 7)", points: [
+        "Parallel sessions = full Claude Code instances, each on its own worktree (claude --worktree name), sharing nothing but the engineer. Tasks that share files run in one session, one after another. Start with 2–3; the ceiling is how many streams one person can review. .worktreeinclude copies git-ignored files (.env, local config) into each worktree.",
+        "Subagents = scoped helpers in .claude/agents/*.md (name, description, tools), checked into Git: simplifier, verifier (fresh context, reports only), researcher.",
+        "Feedback loop: one-command targets (make test) that exit non-zero, healthy output listed in CLAUDE.md, quantifiable targets, visual check for UI. Bug fix: failing test first, committed, then a hook blocks test-file edits during the fix.",
+        "AI review: REVIEW.md passes (bugs · security · compliance against spec.md/plan.md), what Important means, nit cap, paths to skip. Findings never approve or block on their own; code owner approval via branch protection. Shadow mode, calibrate against human review before gating on severity counts. A mistake flagged twice → CLAUDE.md.",
+        "Managed Code Review: Owner enables it, GitHub app, runs on open / each push / @claude review; inline findings by severity, never pushes fixes (/code-review --fix locally). claude-code-action@v1 (/install-github-app): @claude fix loop, prompt for automated runs, cron, use_bedrock/vertex/foundry, claude_args (--max-turns, permission mode, allowed tools).",
+        "Indicators: concurrent sessions per engineer with review quality held · first-pass CI success · time to first review · share of comments resolved without a human · defects caught before vs after merge."
+      ]},
+      { title: "Unattended runs and long sessions (module 7)", points: [
+        "Cloud scheduled tasks: prompt + repo + connectors + trigger (cron, HTTP POST, GitHub event). Research preview, at most hourly, fresh clone of the default branch, push to claude/… (branch protection governs pushes).",
+        "Headless (-p): your environment and pipeline; --output-format json + --json-schema → structured_output; --resume with session_id for multi-step. --bare: skips hooks, skills, plugins, MCP, CLAUDE.md; needs ANTHROPIC_API_KEY; same setup on every machine (not for testing the repo's own config).",
+        "Agent SDK = the same engine inside your product (query, allowedTools, system prompt, permission mode).",
+        "Long sessions: plan mode first and read the plan · /compact with instructions · rewind (Esc Esc): restore code/conversation, summarize from/up to here · /goal = completion condition checked by an evaluator that reads only the transcript · /loop = prompt on an interval (fixed loops stop after 7 days).",
+        "Customization governance: Owner provisioning · skill sharing · share with groups · Publishing Off / Requires review / Open. Postures: open build reviewed spread · centralized · fully open; a custom role can turn sharing off for one group. Tightening Publishing does not remove published skills; turning Public projects off makes them private for good."
+      ]},
       { title: "Foundations refresher — CLAUDE.md and settings scopes", points: [
         "CLAUDE.md: managed → user (~/.claude) → project (./CLAUDE.md or .claude/) → local (CLAUDE.local.md). Files walking up from cwd are concatenated, not overridden; subdirectory files load when Claude reads files there.",
         "@imports resolve from the importing file, four hops max, load at launch. .claude/rules/*.md with paths frontmatter load when matching files are read. Keep each file under ~200 lines; must-happen → hook.",
