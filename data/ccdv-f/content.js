@@ -26,7 +26,8 @@ window.NOTES["ccdv-f"] = {
         "HITL placement by worst case: before destructive calls (write, delete, send) · after a planning step · on unexpected output (error flag, empty, out of bounds).",
         "Memory scope: in-context (short sessions) · external storage (state across sessions or users, inject the relevant subset) · summarized (long chats; only what the summarizer keeps) · stateless (self-contained jobs). Decide at design time.",
         "Subagents start clean: no conversation, no skills (list them in the subagent config), but they inherit the parent's permissions.",
-        "Orchestrator-worker multiplies tokens (~15× in Anthropic's research system): only for work that splits into independent parts; coding-style coupled work → one agent. Capable lead, cheaper workers."
+        "Orchestrator-worker multiplies tokens (~15× in Anthropic's research system): only for work that splits into independent parts; coding-style coupled work → one agent. Capable lead, cheaper workers.",
+        "Hooks (filesystem or SDK callbacks) are the place for must-happen actions such as audit logging. Workers return short fixed-format reports. Long runs checkpoint per step with idempotent side effects. Production traces move the line: fixed path → workflow, variable remainder → agent."
       ]}
     ],
     pitfalls: [
@@ -72,6 +73,12 @@ window.NOTES["ccdv-f"] = {
         "Lifecycle: requirements → design → build → test → deploy → operate → iterate, with gates (no build before residency is satisfied, no full rollout before the eval clears).",
         "Platforms: first-party API (new features first) · Claude Platform on AWS · Claude in Amazon Bedrock (Messages API) · Vertex AI · Foundry (Azure-hosted or Anthropic-hosted per model). Customer's certified cloud usually decides; compliance is pass-or-fail; compare total cost (egress, fees, integration).",
         "Accelerators: parameterize customer values with defaults, document assumptions, bundle eval and audit log. Contributions: rights and attribution first, then focused code, runnable example, test, assumptions; Cookbook for focused patterns."
+      ]},
+      { title: "Application design and SDLC habits", points: [
+        "Surfaces differ: claude.ai brings its own system prompt and features; an API request carries only what you send. Put user documents in tags and say they are data. Images go before the question about them.",
+        "Bedrock: the SDK's Bedrock client, AWS credentials, Bedrock model IDs. Async overlaps calls but the rate limit still applies: bound concurrency and back off.",
+        "Prompts are versioned with the code, gated by the eval, logged by version. Clear the session between unrelated tasks. Large refactors: plan, then small tested commits. AI review: trust what the diff proves, test runtime claims.",
+        "Plugin dependencies (tools like jq, env vars) are documented and checked at session start. Production findings flow back into requirements and graded cases."
       ]}
     ],
     pitfalls: [

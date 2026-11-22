@@ -1,4 +1,4 @@
-// CCDV-F Revision — Domain 6: Prompt and Context Engineering (11%) — 10 items
+// CCDV-F Revision — Domain 6: Prompt and Context Engineering (11%) — 12 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d6-01", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -80,5 +80,21 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
     "Move the field labels into enum values so that the property names stay fixed across tenants",
     "Use one fixed schema structure for all customers, and pass each customer's labels in the prompt"],
   correct:[3],
-  explanation:"A new schema structure adds compilation latency, while a structure already seen reuses the cached grammar (24 hours after last use). Labels also belong out of property names for healthcare: PHI must not appear in property names, enum or const values, or patterns. Warm-up requests (A) still recompile each new layout. HIPAA readiness (B) does not lift the rule on schemas. Enum values (C) are covered by the same rule." }
+  explanation:"A new schema structure adds compilation latency, while a structure already seen reuses the cached grammar (24 hours after last use). Labels also belong out of property names for healthcare: PHI must not appear in property names, enum or const values, or patterns. Warm-up requests (A) still recompile each new layout. HIPAA readiness (B) does not lift the rule on schemas. Enum values (C) are covered by the same rule." },
+{ id:"d6-p06", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A policy assistant built on RAG gives wrong answers on about 12% of a labeled question set. The team is debating a new embedding model, a new prompt, or a bigger generation model. What should it look at first?",
+  options:["The failing questions, checking for each whether the passage holding the answer was retrieved",
+    "The average similarity score of the retrieved passages across the whole labeled question set",
+    "The answers a bigger generation model gives on the failing questions with the same retrieval",
+    "The token count of each prompt sent for the failing questions compared with the passing ones"],
+  correct:[0],
+  explanation:"Stage-by-stage diagnosis starts by splitting failures: answer not retrieved points to retrieval (chunking, embeddings, search), answer retrieved but ignored or misread points to generation (prompt, assembly). Average similarity (B) does not say whether the right passage came back. A bigger model (C) and token counts (D) test fixes before knowing which stage fails." },
+{ id:"d6-p07", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"When no retrieved passage contains the answer, a benefits assistant still answers fluently from general knowledge, and employees have acted on wrong figures. Answers must be traceable to company documents. What should the team change?",
+  options:["Lower the temperature on each request so that the model invents fewer figures when it answers",
+    "Move the assistant to a larger model, which knows more about benefits from all its training data",
+    "Require answers drawn only from the passages with citations, plus a not-found reply otherwise",
+    "Pass more passages to the model on each question so that the answer is more often included"],
+  correct:[2],
+  explanation:"Grounding means answering from the sources with citations a reader can check, and declaring when the sources do not contain the answer; the application can also reject answers whose citations do not resolve. Sampling settings (A) do not ground anything, and the newest models reject them. More training knowledge (B) is the problem, not the fix. More passages (D) does not help when none holds the answer." }
 ]);
