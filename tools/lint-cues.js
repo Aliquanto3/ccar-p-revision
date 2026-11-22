@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 /* Linter anti-cues — règles issues des audits croisés Opus 5 / GPT-5.6 (août 2026).
-   Usage: node tools/lint-cues.js [--hard-only] [--list] — code retour 1 si des items sont flagués. */
-const path=require('path');
+   Usage: node tools/lint-cues.js [--cert ccar-p|ccdv-p|all] [--list] — code retour 1 si des items sont flagués.
+   Les items "exam-guide-sample" (officiels, non modifiables) sont exclus du contrôle. */
+const path=require('path'), fs=require('fs');
 global.window={};
-['d1','d2','d3','d4','d5','d6','d7'].forEach(d=>require(path.join(process.cwd(),'data','questions-'+d+'.js')));
-const HARD_ONLY=process.argv.includes('--hard-only');
-const Q=window.QUESTIONS.filter(q=>!HARD_ONLY||q.difficulty==='hard');
+const argCert=(process.argv[process.argv.indexOf('--cert')+1]||'all');
+const certs=fs.readdirSync(path.join(process.cwd(),'data'),{withFileTypes:true}).filter(e=>e.isDirectory()).map(e=>e.name)
+  .filter(c=>argCert==='all'||process.argv.indexOf('--cert')<0||c===argCert);
+certs.forEach(c=>fs.readdirSync(path.join(process.cwd(),'data',c)).filter(f=>/^questions-d\d+\.js$/.test(f))
+  .forEach(f=>require(path.join(process.cwd(),'data',c,f))));
+const HARD_ONLY=false;
+const Q=certs.flatMap(c=>(window.BANK[c]||[]).map(q=>Object.assign({},q,{id:c+':'+q.id}))).filter(q=>q.source!=='exam-guide-sample');
 const RATIONALE=/,\s+(since|because|keeping|making|letting|giving|preserving|breaking|guaranteeing|restoring|trading|sorting|committing|so\s)/;
-const ABSOLUTE=/\b(always|never|every|entirely|outright|forever|nothing:)|full stop/i;
+const ABSOLUTE=/\b(always|never|every|entirely|outright|forever)\b|\bnothing:|full stop/i;
 const JARGON=/\b(scoped|per-|bounded|explicit|structured|versioned|deterministic)\b/i;
 const flags={};
 function flag(q,code){(flags[q.id]=flags[q.id]||new Set()).add(code);}
@@ -33,6 +38,29 @@ for(const q of Q){
     }
   }
   if(kHas(JARGON)&&!dHas(JARGON)) flag(q,'R6-register');
+  // R7 — option isolée par son attaque : premier mot de la clé absent des distracteurs alors que des distracteurs partagent le leur
+  if(q.type==='single'){
+    const lead=o=>o.trim().split(/[\s,]+/)[0].toLowerCase();
+    const dl=opts.filter((_,i)=>!isK(i)).map(lead);
+    if(!dl.includes(lead(opts[K[0]])) && dl.some((w,i)=>dl.indexOf(w)!==i)) flag(q,'R7-odd-lead');
+  }
+  // R8 — l'explication cite une lettre de la clé parmi les options rejetées (bug de permutation)
+  const L='ABCDE', keyL=K.map(i=>L[i]);
+  if((q.explanation||'').match(/\(([A-E](?:\s*,\s*[A-E])*)\)/g)?.some(m=>keyL.some(k=>m.includes(k)))) flag(q,'R8-expl-letter');
+}
+// R9 — équilibre des positions de clé à l'échelle de la banque (avertissement, par certification)
+for(const c of certs){
+  const B=Q.filter(q=>q.id.startsWith(c+':'));
+  const multi=B.filter(q=>q.type==='multi'), pos=[0,0,0,0,0];
+  multi.forEach(q=>q.correct.forEach(i=>pos[i]++));
+  if(multi.length>=4 && pos.some(n=>n>multi.length*0.6)) console.log('R9-multi-positions ['+c+'] clés multi par position A-E:',pos.join('/'),'sur',multi.length,'items');
+}
+// R10 — « la plus longue est la bonne » : part des items à réponse unique dont la clé est strictement la plus longue
+// (hasard = 25 % sur 4 options). Avertissement au-delà de 30 % par certification.
+for(const c of certs){
+  const S=Q.filter(q=>q.id.startsWith(c+':')&&q.type==='single');
+  const n=S.filter(q=>{const l=q.options.map(o=>o.length),k=q.correct[0];return l.every((x,i)=>i===k||x<l[k]);}).length;
+  if(S.length>=20 && n/S.length>0.30) console.log('R10-longest-key ['+c+'] clé strictement la plus longue:',n,'/',S.length,'('+Math.round(100*n/S.length)+'%)');
 }
 const ids=Object.keys(flags);
 const byRule={};

@@ -1,0 +1,26 @@
+// Length rebalancing, second pass (key still strictly longest by a few characters).
+module.exports = {
+  "d7-29": { options: [["One shared service account across all three contexts, behavior kept consistent by construction", "One shared service account across all three contexts, behavior kept uniform across them by construction"]] },
+  "d2-57": { options: [["Prompt storage moved from code into a versioned database with per-edit history and author names", "Prompt storage moved from code into a versioned database with per-edit history, dates and author names"]] },
+  "d4-43": { options: [["A doubled test-count target, genuinely real tests emerging within the larger generated volume", "A doubled test-count target, genuinely useful real tests emerging within the larger generated volume"]] },
+  "d3-70": { options: [["Duplicate each table in the index at three chunk granularities for wider coverage", "Duplicate each table in the index at three chunk granularities for much wider coverage"]] },
+  "d5-26": { options: [["Publish one generic model card, treated as sufficient for users, auditors, and operators", "Publish one generic model card, treated as sufficient for users, auditors, and operators alike"]] },
+  "d5-51": { options: [["An internal note in the sprint retrospective, filed for the team's own records and lessons", "An internal note in the sprint retrospective, filed for the team's own records and lessons learned"]] },
+  "d6-58": { options: [["Track user satisfaction alone, a daily-updating measure the whole board understands", "Track user satisfaction alone, a daily-updating measure the whole board readily understands"]] },
+  "d6-59": { options: [["Silence until the next quarterly review, the recovered numbers speaking for themselves", "Silence until the next quarterly review, the recovered numbers left speaking for themselves"]] },
+  "d6-66": { options: [["Alternate the optimization target between the two sponsors on a quarterly rotation", "Alternate the optimization target between the two sponsors on a fixed quarterly rotation"]] },
+  "d7-31": { options: [["Apply the cut: self-evident overconsumption, corrected by budget discipline, case closed", "Apply the cut: self-evident overconsumption, corrected by plain budget discipline, case closed"]] },
+  "d7-32": { options: [["A feedback channel: issues collected from consuming teams, triaged weekly, after rollout", "A feedback channel: issues collected from consuming teams, triaged weekly, after the rollout"]] },
+  "d7-34": { options: [["Longer on-call overlaps: veterans transferring knowledge informally on each shift", "Longer on-call overlaps: veterans transferring their knowledge informally on each shift"]] },
+  "d1-67": { options: [["Move the logic into code, leaving the prompt a one-line task statement the template fills at runtime", "Move the logic into code, leaving the prompt a one-line task statement that the template fills in at runtime"]] },
+  "d1-70": { options: [["Cache aggressively so hit rates absorb most of the gap between demand and limit", "Cache aggressively so hit rates absorb most of the gap between demand and the limit"]] },
+  "d2-44": { options: [["Breakpoints placed around the user request, the most variable part of the whole prompt", "Breakpoints placed around the user request, the most variable part of the whole prompt text"]] },
+  "d2-48": { options: [["Drop the enum on this field and accept free-text values from the extraction pass", "Drop the enum on this field and accept free-text values from the extraction pass instead"]] },
+  "d3-62": { options: [["Embed the proven formulation inside each tool's own description text", "Embed the proven formulation inside each tool's own description text field"]] },
+  "d3-64": { options: [["One concatenated master resource, the full record set, behind a single addressable URI", "One concatenated master resource, the full record set, behind a single addressable URI path"]] },
+  "d3-82": { options: [["Synchronized clocks so log timestamps line up cleanly across the four services involved", "Synchronized clocks so that log timestamps line up cleanly across the four services involved"]] },
+  "d5-44": { options: [["Resolved by encryption: protected data in transit to the US satisfies the transfer rules", "Resolved by encryption: protected data in transit to the US satisfies the data transfer rules"]] },
+  "d7-23": { options: [["Nightly scheduling rather than per-PR runs, runaway execution capped at one night's budget", "Nightly scheduling rather than per-PR runs, runaway execution capped at one night's full budget"]] },
+  "d7-25": { options: [["Have the command close by summarizing findings and disclaiming its own verbosity", "Have the command close by summarizing its findings and disclaiming its own verbosity"]] },
+  "d7-27": { options: [["A monthly email reminding teams to vet plugins and Skills before installing them", "A monthly email reminding teams to vet plugins and Skills before they install them"]] }
+};

@@ -1,6 +1,7 @@
 // CCAR-P Revision — Flashcards
 // Schema: {id, domain, front, back}
-window.FLASHCARDS = [
+window.FLASHCARDS = window.FLASHCARDS || {};
+window.FLASHCARDS["ccar-p"] = [
   // D1 — Solution Design & Architecture
   { id: "f101", domain: 1, front: "The four decisions to make before building a Claude solution", back: "1) What work Claude owns · 2) What form it takes (augmented call / workflow / agent) · 3) Which reference architecture pattern · 4) Which model + context strategy." },
   { id: "f102", domain: 1, front: "When does an agent beat a workflow?", back: "Only when the path is dynamic: step count unknown in advance, or intermediate results determine the next action. Otherwise a workflow is cheaper, faster, and testable." },
