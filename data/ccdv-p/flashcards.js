@@ -59,6 +59,10 @@ window.FLASHCARDS["ccdv-p"] = [
   { id: "v805", domain: 8, front: "Claude Code settings precedence", back: "Managed > --settings > settings.local.json > project settings.json > user settings.json. Lists merge." },
   { id: "v806", domain: 8, front: "Committed allow rules not applied for a new teammate", back: "They wait for folder trust. Deny and ask rules apply at once." },
   { id: "v807", domain: 8, front: "CLAUDE.local.md and worktrees", back: "Exists only in its worktree: import a home-directory file (@~/.claude/…) instead." },
+  // D4 / D8 — incident response (module 6)
+  { id: "v406", domain: 4, front: "Agent proposes a rollback: one check before approving", back: "The suspected change landed before the symptom began (dashboard + linked deploy/PR)." },
+  { id: "v407", domain: 4, front: "Postmortem prompt — four levers", back: "Timestamped sequence from the record · root cause vs contributing factors · blameless (system behavior) · your template, owners on each action item." },
+  { id: "v808", domain: 8, front: "Catch slow problems that never page, without noise", back: "A routine that compares the alerting dashboard with its last state and posts only on change." },
   // D2 — Production Integration, Reliability, and Knowledge Grounding (module 1)
   { id: "v201", domain: 2, front: "Web search: what does your code NOT have to do, and why?", back: "Write a handler or send a tool_result. It is a server tool running on Anthropic's infrastructure; you add one entry to tools and get the finished answer back." },
   { id: "v202", domain: 2, front: "allowed_domains — four formatting rules", back: "Bare domain (no https://) · subdomains included · a specific subdomain restricts to it only · cannot be combined with blocked_domains in the same request (400)." },

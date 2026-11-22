@@ -180,6 +180,14 @@ window.NOTES["ccdv-p"] = {
         "Wrong tool or too many calls → change the description (and merge overlaps). Wrong type or format → change the parameter description and add input_examples. Change only the part at fault, then rerun the eval.",
         "Measure with an eval: fixed labeled questions, run on the same model before and after, scored on tool calls."
       ]},
+      { title: "Incident response with an agent in the loop (module 6)", points: [
+        "Standing responsibility: give the job and the runbook once, as a channel-level instruction (not in a thread). Route alerts to the agent through the integration's message template; with proactive replies on it reads every post, so say which post types to investigate and which to ignore.",
+        "Triage reply: does each alert need action, who owns it, what broke (evidence: logs, dashboards), why (the change that preceded it), proposed fix matched to the runbook. Before approving, check that the suspected change came before the symptom.",
+        "Human gates: the agent runs a rollback only after the on-call engineer approves in the thread; without a deploy connection it writes the step out. Customer replies are drafts an agent sends; mention a person only when the instructions say so (e.g. P1 only, or only when a decision is needed). Connection permissions decide what the agent may change.",
+        "Pattern over tickets: several customers, same symptom, short window, same shard → one suspected incident (P1): link the tickets, mention the lead, leave declaration and customer communication to them.",
+        "Learning loop: the fix ships with a regression check (e.g. load test on connection wait in CI) so the same change fails next time; a routine compares dashboards with their last state and posts only on change, to catch slow problems that never page.",
+        "Postmortem prompt: reconstruct the timestamped sequence from the record (not memory), separate root cause from contributing factors, blameless (system behavior), owners on every action item, your template as context, flag uncertainty. Customer-facing version: name the audience, quantify how many and how long, direct quotes, bounded time window."
+      ]},
       { title: "Foundations refresher — stop reasons and HTTP errors", points: [
         "Stop reasons arrive in a 200 response; errors are 4xx/5xx. Handle them separately.",
         "max_tokens ending in an incomplete tool_use → retry with a higher max_tokens (continuing is for truncated text).",

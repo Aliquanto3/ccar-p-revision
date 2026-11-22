@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 4: Advanced Debugging and Incident Response (10%) — 14 items
+// CCDV-P Revision — Domain 4: Advanced Debugging and Incident Response (10%) — 18 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d4-01", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -113,5 +113,37 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Run claude doctor to see what was rejected, then fix the file's JSON",
     "Run the job with dontAsk so that calls without a hook are denied"],
   correct:[2],
-  explanation:"A -p run shows no dialog: Claude Code skips the broken file and continues, so the hooks silently disappear. claude doctor lists what was rejected (here, invalid JSON such as a trailing comma). CLAUDE.md (A) is a request, not a hook. The local file (B) is not the fix for a broken shared file. dontAsk (D) changes approvals but leaves the hooks missing." }
+  explanation:"A -p run shows no dialog: Claude Code skips the broken file and continues, so the hooks silently disappear. claude doctor lists what was rejected (here, invalid JSON such as a trailing comma). CLAUDE.md (A) is a request, not a hook. The local file (B) is not the fix for a broken shared file. dontAsk (D) changes approvals but leaves the hooks missing." },
+{ id:"d4-15", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An on-call agent replies to a checkout latency page: p95 rose from 0.4s to 4.1s, and it names a tax-service deploy as the cause because it is the only production change in the hour before the alert. It proposes a rollback and waits for the on-call engineer's approval. Which check best tests the causal claim before approving?",
+  options:["That the deploy's pull request passed CI and review before it was merged",
+    "That the runbook lists a rollback step for tax-service and who may run it",
+    "That the dashboard shows the deploy landing before the latency rise began",
+    "That the error rate is still climbing at the time the agent posted its reply"],
+  correct:[2],
+  explanation:"A cause has to come before its effect: checking that the deploy preceded the latency rise is the quickest test of the agent's claim. Passing CI (A) says nothing about this incident. The runbook step (B) matters for running the rollback, not for whether it is the right one. A rising error rate (D) speaks to severity, not cause." },
+{ id:"d4-16", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An agent triages a support escalations channel and may mention a person only for a P1. Within eleven minutes, three different customers report failed order submission, and all three accounts sit on the same shard. Declaring incidents and replying to customers are decisions for the on-call lead. What should the agent do?",
+  options:["Merge the three tickets into the first one and send each customer the same status update",
+    "Link the three tickets as one suspected incident and mention the on-call lead to decide",
+    "Keep each ticket at P2 until a fourth report confirms the pattern, then mention the lead",
+    "Declare an incident in the paging tool and post a status-page notice for that shard"],
+  correct:[1],
+  explanation:"Three related reports in a short window on one shard point to one incident, which makes it a P1: the agent links the tickets and mentions the lead, who decides on declaring it and on customer replies. Sending updates (A) or declaring the incident (D) takes decisions that belong to a person. Waiting for a fourth report (C) delays a P1." },
+{ id:"d4-17", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A team asks an agent to draft postmortems from incident channels. The first draft opens with a single line, \"the engineer on shift merged a bad config\", and reviewers reject it as both blaming and incomplete. The next drafts must give a real causal chain that survives review. What should the prompt ask for?",
+  options:["A shorter summary of the whole channel that states the single most likely cause in one clear line",
+    "The same causal paragraph with the engineer's name removed and replaced by the team's name",
+    "A timeline built from what participants recall in the review meeting, before the cause itself",
+    "The root cause and the contributing factors as separate parts, described as what the system did"],
+  correct:[3],
+  explanation:"Separating root cause from contributing factors forces a causal chain instead of a single scapegoat line, and describing system behavior keeps the document blameless. A single line (A) is what reviewers rejected. Removing a name (B) keeps the blame and the missing factors. The timeline should be reconstructed from the timestamped record, not from recollection (C)." },
+{ id:"d4-18", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"After a rollback, the team confirms that a deploy halved a service's connection pool, which made requests queue under morning traffic. They want a follow-up that stops the same kind of change from reaching production again. Which follow-up does that?",
+  options:["A CI test that fails when connection wait rises under load, merged with the fix",
+    "A runbook note telling on-call to check pool size first on latency alerts",
+    "A lower paging threshold on p95 latency so that the next alert fires much sooner",
+    "A standing instruction to the agent to propose rolling back this service first"],
+  correct:[0],
+  explanation:"Turning the incident into a regression check makes a similar pool change fail before it ships. A runbook note (B), an earlier page (C) and a faster rollback proposal (D) all act after the change is already in production." }
 ]);

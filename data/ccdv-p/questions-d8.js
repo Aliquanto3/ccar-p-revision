@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 8: Agent Fleet Operations for Software Delivery (10%) — 16 items
+// CCDV-P Revision — Domain 8: Agent Fleet Operations for Software Delivery (10%) — 18 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d8-01", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -129,5 +129,21 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Pass --permission-mode bypassPermissions in the command that the container runs",
     "Add each built-in tool to permissions.allow in the committed .claude/settings.json"],
   correct:[2],
-  explanation:"The auto and bypassPermissions values of defaultMode do not take effect from project or local settings (A, B); set them in user or managed settings, or pass --permission-mode for one run, which also leaves developers' sessions alone. Committed allow rules (D) wait for folder trust and still leave other calls to the permission mode." }
+  explanation:"The auto and bypassPermissions values of defaultMode do not take effect from project or local settings (A, B); set them in user or managed settings, or pass --permission-mode for one run, which also leaves developers' sessions alone. Committed allow rules (D) wait for folder trust and still leave other calls to the permission mode." },
+{ id:"d8-17", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An on-call agent investigates each paging alert. A disk-space problem built up over three days without crossing a paging threshold, and no one looked at it until a service failed. The team wants slow problems like this investigated, without adding noise to the on-call channel. What should it set up?",
+  options:["A routine every two hours that posts the full current state of the alerting dashboard in the on-call channel",
+    "A lower paging threshold on each disk metric so that slow growth pages the on-call engineer sooner",
+    "A routine every two hours that compares the alerting dashboard with its last state, posting only on change",
+    "A weekly handoff that summarizes the alert threads posted in the channel for the incoming engineer"],
+  correct:[2],
+  explanation:"A scheduled comparison with the previous state catches what never pages, and posting only on change keeps the channel quiet. Posting the full state each time (A) is the noise the team wants to avoid. Lower thresholds (B) trade slow detection for more pages. A handoff (D) only covers alerts that were posted." },
+{ id:"d8-18", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An agent with proactive replies on looks at each new post in an on-call channel. The channel also receives deploy notices and non-paging warnings, and the agent now replies to all of them. Integrations must keep posting where they do, and paging alerts must still be handled without anyone tagging the agent. What should the team do?",
+  options:["Turn proactive replies off so that the agent replies only when someone tags it in an alert's thread",
+    "Remove the agent's mention from the warning integration's template so that warnings stop reaching it",
+    "Ask the agent to reply to deploy notices and warnings with a short line instead of a full investigation",
+    "Keep proactive replies on, and tell the agent in the channel which posts to look into and which to skip"],
+  correct:[3],
+  explanation:"With proactive replies on, the agent reads every post, so the fix is a standing instruction naming which kinds of posts to investigate and which to ignore. Turning proactive replies off (A) means paging alerts need a tag. Removing the mention (B) does not help, because a proactive agent still sees each post. Shorter replies (C) still add a reply to each notice." }
 ]);
