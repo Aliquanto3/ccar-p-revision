@@ -2,11 +2,11 @@
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d4-01", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
-  question:"After the rollback, a fix ships that restores the status panel's cache. The team wants future agent runs to be stopped automatically if they remove the cache again while making the panel feel live. What should be added?",
-  options:["A CLAUDE.md line telling Claude to keep the cache whenever it edits the status panel",
-    "A lower 3σ threshold so that a repeat breach triggers the rollback runbook sooner",
-    "An eval that replays the request behind the incident and fails when the cache is gone",
-    "A note in the memory store so the next diagnosis starts from this incident's cause"],
+  question:"After the rollback, a fix ships that restores the status panel's cache. Before adopting any new model or prompt version, the team wants to measure whether agents asked to make the panel feel live would remove the cache again. What should be added?",
+  options:["A PostToolUse hook that rejects edits setting the cache duration of the status panel to zero",
+    "A required pull-request check that fails when the panel's cache duration is set to zero",
+    "A replay eval that gives agents the incident's request and checks that the panel still caches",
+    "A CLAUDE.md line telling Claude to keep the cache whenever it edits the status panel"],
   correct:[2],
-  explanation:"Each fixed incident leaves an eval behind: starting from the commit before the incident, it gives the agent the original request and checks that tests pass, lint is clean and the panel still caches. That checks automatically. A CLAUDE.md line (A) is advisory, a tighter band (B) reacts after the damage, and memory (D) speeds diagnosis without preventing the change." }
+  explanation:"Each fixed incident leaves an eval behind: from the commit before the incident, it gives the agent the original request and checks tests, lint and that the panel still caches, which measures agent behavior before a new version is adopted. A hook (A) and a PR check (B) are good deterministic guards that block the change, but they do not measure how a candidate model or prompt behaves. A CLAUDE.md line (D) is advisory and measures nothing." }
 ]);

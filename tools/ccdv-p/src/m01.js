@@ -140,11 +140,11 @@ module.exports = [
   correct:[0],
   explanation:"Each non-interactive run should act under the agent's own identity, with short-lived credentials scoped to its environment, so the log separates the agent's actions from the engineer's. A prompt-written tag (B) is self-reported, per-call approval (C) still records the engineer as actor, and a shared static key (D) erases attribution between jobs and keeps a long-lived secret." },
 { id:"d3-01", domain:3, type:"single", select:1, source:"generated",
-  question:"A platform engineer has rolled out a read-only claude -p step that triages failed builds and posts a summary to the pull request. The VP wants an early signal, within weeks, that the step reduces load on engineers. Which indicator fits best?",
-  options:["Share of pipeline failures triaged without paging a human, taken from the pipeline logs",
-    "Change failure rate and lead time for changes over the next two quarters of releases",
-    "Number of triage summaries the step posted, taken from the pull request thread history",
-    "Average rating engineers give the summaries in a monthly survey on the triage step"],
+  question:"A platform engineer has rolled out a read-only claude -p step that triages failed builds and posts a summary to the pull request. The VP wants an early signal, within weeks, that the step reduces the load on engineers, without adding any data collection beyond what the tools already log. Which indicator fits best?",
+  options:["Share of pipeline failures triaged without paging a human, from the pipeline logs",
+    "Change failure rate and lead time for changes, from the CI and deployment tooling",
+    "Median time from a failed build to the first human comment, from the PR history",
+    "Engineers' rating of each summary, from a short survey sent after each failure"],
   correct:[0],
-  explanation:"The leading indicator for this play is the share of pipeline failures triaged without paging a human, read directly from the pipeline logs. DORA measures (B) are the lagging indicator, summary counts (C) measure output rather than load removed, and survey ratings (D) measure perceived quality with a monthly delay." }
+  explanation:"The play's leading indicator is the share of pipeline failures triaged without paging a human, read from logs the pipeline already keeps. DORA measures (B) are the lagging indicator and move over quarters. Time to first human comment (C) measures responsiveness, not whether a person was needed. A survey (D) adds new data collection." }
 ];
