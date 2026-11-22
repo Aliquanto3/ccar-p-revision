@@ -78,7 +78,9 @@ window.NOTES["ccdv-f"] = {
         "Surfaces differ: claude.ai brings its own system prompt and features; an API request carries only what you send. Put user documents in tags and say they are data. Images go before the question about them.",
         "Bedrock: the SDK's Bedrock client, AWS credentials, Bedrock model IDs. Async overlaps calls but the rate limit still applies: bound concurrency and back off.",
         "Prompts are versioned with the code, gated by the eval, logged by version. Clear the session between unrelated tasks. Large refactors: plan, then small tested commits. AI review: trust what the diff proves, test runtime claims.",
-        "Plugin dependencies (tools like jq, env vars) are documented and checked at session start. Production findings flow back into requirements and graded cases."
+        "Plugin dependencies (tools like jq, env vars) are documented and checked at session start. Production findings flow back into requirements and graded cases.",
+        "CI: claude -p --output-format json, gate on is_error and the exit code. Build request bodies with a JSON serializer. Commit CLAUDE.md, .claude/settings.json, .mcp.json (with ${VAR} refs) and subagents; keep settings.local.json and CLAUDE.local.md personal.",
+        "Measure latency from the users' region with real payloads. Before refactoring untested code, pin its behavior with characterization tests. On a deprecation notice, evaluate the replacement against the baseline and switch before the date."
       ]}
     ],
     pitfalls: [

@@ -28,8 +28,9 @@ function place(q, wantKeys) {
   q.correct = keys.map(i => newIdx[i]).sort((a, b) => a - b);
   q.explanation = remapLetters(q.explanation, newIdx);
 }
+let rm = 0, r4 = 0; // select-2 pair rotation runs across modules so positions stay balanced bank-wide
 for (const f of fs.readdirSync(srcDir).filter(f => /^m\d+\.js$/.test(f)).sort()) {
-  const mod = parseInt(f.slice(1), 10); let rs = 0, rm = (mod - 1) * 3, r4 = mod - 1; // offset pairs per module so they do not repeat
+  let rs = 0; // offset pairs per module so they do not repeat
   for (const q of require(path.join(srcDir, f))) {
     if (q.source !== 'exam-guide-sample') {
       if (q.type === 'single') place(q, [targetSingle[rs++ % targetSingle.length]]);

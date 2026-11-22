@@ -52,9 +52,9 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d4-p02", domain:4, type:"multi", select:2, difficulty:"hard", source:"generated",
   question:"A team reviews last month's failed Messages API calls to decide which ones their client should retry automatically with exponential backoff. They only want retries where sending the same request again can succeed. Which TWO failures qualify?",
   options:["A 529 overloaded_error returned during a traffic peak on the API",
-    "A 500 api_error with a request ID, returned once on an ordinary request",
     "A 413 request_too_large returned on a request carrying several embedded PDFs",
+    "A 500 api_error with a request ID, returned once on an ordinary request",
     "A 429 with no retry-after header, returned once the monthly spend cap was hit"],
-  correct:[0,1],
-  explanation:"Overload (529) and internal errors (500) are transient: the SDKs retry them with backoff by default. The same request will hit the size limit again (C); shrink it or use the Files API. A spend-cap 429 (D) keeps failing until access resumes, so a retry cannot succeed." }
+  correct:[0,2],
+  explanation:"Overload (529) and internal errors (500) are transient: the SDKs retry them with backoff by default. The same request will hit the size limit again (B); shrink it or use the Files API. A spend-cap 429 (D) keeps failing until access resumes, so a retry cannot succeed." }
 ]);

@@ -156,6 +156,12 @@ window.NOTES["ccdv-p"] = {
         "Exceptions: activity feed 6 years regardless · remote (cloud) session transcripts have no default period: kept until the member deletes them, except cloud sessions Claude started from a chat, deleted with that chat (the course says “6 years”; the compliance docs say no default period) · local Cowork / Claude Code transcripts = finite custom window (chats or all data), else 6 years from capture; with HIPAA readiness 30 days from capture, or the custom window if shorter.",
         "Inference hooks: every prompt from chat, Cowork and Claude Code goes to the security team’s server for allow-or-deny before Claude answers — block at the door instead of governing after the fact."
       ]},
+      { title: "Tracing, sampling and drift", points: [
+        "One trace per run, a span per model and tool call, trace ID propagated to subagents and tool backends; tag each trace with model ID, prompt version and tool schema version so quality can be compared by cohort.",
+        "Tail-based sampling: decide after the run, keep failed and slow traces plus a random share of normal ones as a baseline.",
+        "Monitor cache hit share (cache reads over all input) per route and alert on drops after deploys; watch usage per key or tenant against its own band, not only the org total.",
+        "Systemic issues show in aggregates: group failing traces by shared attributes and compare with successes. Under no-content policies, capture metadata (model, tokens, tools, stop reasons, latency) with hashed IDs."
+      ]},
       { title: "Closing the loop — control bands", points: [
         "Detection is deterministic, version-controlled and unit-tested: mean and σ over a rolling window (30 days of hourly readings), no model involved. Tiers live in version-controlled config (bands.yaml).",
         "Noise alone (bell curve, 720 readings/month): above 1σ ≈ 1 in 6 (≈ 4/day), above 2σ ≈ 1 in 44 (≈ 16/month), above 3σ ≈ 1 in 740 (≈ 1/month).",
@@ -223,6 +229,11 @@ window.NOTES["ccdv-p"] = {
       "Online quality measurement — live-traffic sampling, A/B tests, feedback loops, metrics matched to task type (extraction, generation, agentic, retrieval-grounded)"
     ],
     sections: [
+      { title: "Keeping evals valid and releases safe", points: [
+        "Contamination: never draw prompt examples from eval cases. Calibrate judges only on labels whose inter-rater agreement is good; fix the rubric first.",
+        "RAG: measure stages separately (recall at k on labeled passages, groundedness of answers). Online A/B: pick the metric of the task type (agentic → resolution verified on traces, not sparse ratings).",
+        "Release criteria: must-pass behavioral checks gate on their own, whatever the average does."
+      ]},
       { title: "Graders and judges (from the Foundations course)", points: [
         "Grader by output shape: exact match (one correct form) · code check (parse, range, required field; free, run on every commit) · LLM judge (open-ended quality; costly and noisy, run on a schedule).",
         "Judge hygiene: reasoning (strengths, weaknesses) before the score, or scores drift to ~6 · calibrate against human labels and fix the rubric when agreement is low · pairwise judges: evaluate both orders, keep order-consistent verdicts · pin the judge model and re-run the labeled set when it changes.",

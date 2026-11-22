@@ -79,6 +79,10 @@ window.FLASHCARDS["ccdv-p"] = [
   { id: "v114", domain: 1, front: "New policy mid-conversation, keep the cache", back: "Append it as a late message. Editing the system prompt or tools invalidates the cached prefix." },
   { id: "v216", domain: 2, front: "RAG answer wrong — first check", back: "Was the passage with the answer retrieved? No: retrieval stage. Yes: generation stage." },
   { id: "v217", domain: 2, front: "Exact part numbers retrieve look-alikes", back: "Add lexical search next to embeddings, rerank the merged results." },
+  { id: "v308", domain: 3, front: "Sampling traces you can still investigate", back: "Tail-based: keep failed and slow runs plus a random share of normal ones for comparison." },
+  { id: "v309", domain: 3, front: "Which change caused the drift?", back: "Tag each trace with model ID, prompt version and tool schema version; compare quality by cohort." },
+  { id: "v506", domain: 5, front: "Judge agrees 85% with one annotator", back: "Check inter-rater agreement between humans first; ambiguous rubric → fix it before calibrating." },
+  { id: "v507", domain: 5, front: "Average up, refund-limit checks fail", back: "Must-pass behavioral checks gate the release on their own." },
   // D2 — Production Integration, Reliability, and Knowledge Grounding (module 1)
   { id: "v201", domain: 2, front: "Web search: what does your code NOT have to do, and why?", back: "Write a handler or send a tool_result. It is a server tool running on Anthropic's infrastructure; you add one entry to tools and get the finished answer back." },
   { id: "v202", domain: 2, front: "allowed_domains — four formatting rules", back: "Bare domain (no https://) · subdomains included · a specific subdomain restricts to it only · cannot be combined with blocked_domains in the same request (400)." },
