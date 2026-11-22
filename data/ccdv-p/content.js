@@ -90,6 +90,15 @@ window.NOTES["ccdv-p"] = {
         "Tools for your own systems (you maintain them), skills for your processes, MCP for third-party services (the provider maintains the server).",
         "mcp_servers declares the connection (type url, url, name, optional authorization_token); a tools entry of type mcp_toolset with mcp_server_name grants access. Claude introspects the server: no schemas to write. Beta header mcp-client-2025-11-20.",
         "Restrict to a subset: default_config {enabled: false}, then enable named tools in configs (e.g. read-only search) — also keeps unused definitions out of context."
+      ]},
+      { title: "Foundations refresher — structured outputs, long requests, batches", points: [
+        "JSON outputs = output_config.format {type: json_schema}; strict tool use = strict: true on a tool. Both can be combined, and work with batches and streaming.",
+        "Output can still miss the schema: stop_reason refusal (200, billed) or max_tokens (truncated). Enum/const casing may differ → compare case-insensitively.",
+        "Schema limits: additionalProperties must be false; minLength/maxLength/minimum not enforced by the API (SDK helpers validate); no arbitrary-key maps → array of {key, value}; required fields come out first.",
+        "Complexity caps across all strict schemas: 20 strict tools, 24 optional parameters, 16 union-typed parameters → 400 “too complex”. Mark only critical tools strict.",
+        "New schema structure = compilation latency; grammar cached 24 h after last use. Incompatible with citations (400) and with prefill. No PHI in property names, enum/const values or patterns.",
+        "Over ~10 minutes: stream (get_final_message) or use batches. An error after a 200 on a stream arrives as an error event.",
+        "Batches: results in any order → match by custom_id (1–64 chars, unique)."
       ]}
     ],
     pitfalls: [
@@ -156,6 +165,14 @@ window.NOTES["ccdv-p"] = {
         "Overlapping thin tools confuse selection: combine them into one tool with a parameter (e.g. fields), keep tools that do different jobs. Meridian: 6 thin tools 14/30 → 3 consolidated 26/30, same model.",
         "Wrong tool or too many calls → change the description (and merge overlaps). Wrong type or format → change the parameter description and add input_examples. Change only the part at fault, then rerun the eval.",
         "Measure with an eval: fixed labeled questions, run on the same model before and after, scored on tool calls."
+      ]},
+      { title: "Foundations refresher — stop reasons and HTTP errors", points: [
+        "Stop reasons arrive in a 200 response; errors are 4xx/5xx. Handle them separately.",
+        "max_tokens ending in an incomplete tool_use → retry with a higher max_tokens (continuing is for truncated text).",
+        "Empty end_turn after tools → text sent after tool_result blocks; send tool_result blocks alone. Last resort: a new user message “Please continue”.",
+        "refusal → read stop_details, retry on a fallback model; for reasoning_extraction change the prompt (e.g. ask for a short explanation, not step-by-step reasoning in a field).",
+        "Retry with backoff: 429 (with retry-after), 500, 529 — the SDKs retry twice by default (max_retries). A spend-cap 429 has no retry-after and keeps failing until access resumes.",
+        "Do not retry unchanged: 400, 401, 403, 404, 413 (size limit: 128 MB Messages, 256 MB Batch). Keep the request-id for support."
       ]}
     ],
     pitfalls: [
@@ -204,6 +221,14 @@ window.NOTES["ccdv-p"] = {
         "Agentic habits: scheduled tasks keep consuming whether or not anyone reads them → review and delete. “Run Cowork in the cloud” is off by default, but unified-experience members run agentic work on Anthropic’s infrastructure anyway.",
         "Before raising a cap: is usage the symptom (change settings) or was the cap set too low (re-base it)? Review caps on a cadence in both directions — monthly by default, tighter early in a rollout.",
         "Reading spend: dashboard (trends, Groups view) · Analytics chat (ad-hoc questions) · Analytics API (programmatic, by group, for chargeback; Primary Owner key) · Spend Limits API sets per-member caps · spend CSV is per member."
+      ]},
+      { title: "Foundations refresher — caching, batches, effort, model choice", points: [
+        "Cache prefix order tools → system → messages: any tool change (order included) invalidates all; tool_choice and images invalidate system + messages. Put per-request content (timestamps, the new message) after the last breakpoint.",
+        "Both cache fields at 0 = not cached, often below the minimum length (512 tokens on current models). No error is returned.",
+        "5-minute TTL refreshed on each read; 1 h TTL for gaps over 5 minutes. Pre-warm with max_tokens 0 on the shared prefix (not in batches, not streamed).",
+        "Batch API: 50% off, stacks with caching; up to 100,000 requests or 256 MB; most done within 1 h, expire after 24 h; results kept 29 days. Not allowed: stream, speed (fast mode), fallbacks, max_tokens 0.",
+        "Effort (output_config.effort): low · medium · high · xhigh · max. Defaults: high on most models, medium on Opus 5.5 and Haiku 5.5. Set it explicitly; vary it across workloads, not inside a cached conversation.",
+        "Model choice: Opus 5.5 by default; Fable 5.2 where Opus at higher effort still falls short on your evals; Sonnet 5.5 for speed + intelligence; Haiku 5.5 for high-volume classification, extraction, routing."
       ]}
     ],
     pitfalls: [
@@ -316,6 +341,14 @@ window.CHEATSHEET["ccdv-p"] = [
     ["Errors", "HTTP 200 · content is one error object, not a list · empty list = no match"],
     ["Billing", "$10 / 1,000 searches + tokens · failed searches not billed but count toward max_uses"],
     ["pause_turn", "Send the paused content back as assistant message, same tools, same container · cap continuations"]
+  ]},
+  { title: "API mechanics — Foundations values", rows: [
+    ["Cache prices", "5 min write 1.25× · 1 h write 2× · read 0.1× (0.05× Opus/Sonnet 5.5, 0.025× Fable 5.2) · max 4 breakpoints · 20-block lookback"],
+    ["Batch API", "−50% · 100,000 requests / 256 MB · 24 h expiry · results 29 days · match by custom_id"],
+    ["Effort defaults", "high on most models · medium on Opus 5.5 and Haiku 5.5"],
+    ["Models (per MTok in/out)", "Fable 5.2 $8/$40 · Opus 5.5 $4/$20 · Sonnet 5.5 $2/$10 · Haiku 5.5 from $0.10/$0.50 · 1M context · 128K output"],
+    ["Retryable", "429 with retry-after · 500 · 529 (SDK: 2 retries) — not a spend-cap 429, not 4xx request errors"],
+    ["Long requests", "> 10 min → streaming or batches"]
   ]},
   { title: "CI/CD agent gates by environment", rows: [
     ["Dev", "release, status, rollback allowlisted · hook allows release"],

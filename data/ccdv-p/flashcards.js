@@ -41,6 +41,15 @@ window.FLASHCARDS["ccdv-p"] = [
   { id: "v702", domain: 7, front: "Which keys of a plugin's settings.json does Claude Code honor?", back: "Only two: agent (promotes a plugin subagent to the main thread) and the subagent status line key." },
   { id: "v801", domain: 8, front: "Which skill wins on a name clash?", back: "Enterprise skills from managed settings: they override personal and project skills of the same name." },
   { id: "v802", domain: 8, front: "strictKnownMarketplaces", back: "Managed setting that limits which marketplaces people can add and install plugins from (entries like source github + repo, or source url + url)." },
+  // D2 / D4 / D6 — Foundations refresher (API mechanics)
+  { id: "v212", domain: 2, front: "JSON outputs: four things the API does not do for you", back: "Enforce maxLength/minimum · express arbitrary-key maps (use [{key, value}]) · guarantee enum casing · prevent refusal or max_tokens truncation." },
+  { id: "v213", domain: 2, front: "Structured outputs: incompatible with…", back: "Citations (400) and assistant prefill. Over 20 strict tools / 24 optional params / 16 unions → 400 “too complex”." },
+  { id: "v403", domain: 4, front: "max_tokens with an incomplete tool_use block", back: "Retry with a higher max_tokens. “Please continue” is for truncated text." },
+  { id: "v404", domain: 4, front: "Empty end_turn right after tool results", back: "You added text after the tool_result blocks. Send tool_result blocks alone." },
+  { id: "v405", domain: 4, front: "Which errors to retry with backoff?", back: "429 with retry-after, 500, 529 (SDK: 2 retries by default). Not a spend-cap 429 (no retry-after) nor 400/401/403/404/413." },
+  { id: "v603", domain: 6, front: "Cache fields both 0, no error", back: "Prefix below the minimum cacheable length (512 tokens on current models) — or a breakpoint on content that changes." },
+  { id: "v604", domain: 6, front: "Batch requests reject…", back: "stream, speed (fast mode), fallbacks, max_tokens 0. Caching works and stacks with −50%." },
+  { id: "v605", domain: 6, front: "Effort defaults and the cache trap", back: "high on most models, medium on Opus 5.5 / Haiku 5.5. Changing top-level effort mid-conversation can invalidate the cache." },
   // D2 — Production Integration, Reliability, and Knowledge Grounding (module 1)
   { id: "v201", domain: 2, front: "Web search: what does your code NOT have to do, and why?", back: "Write a handler or send a tool_result. It is a server tool running on Anthropic's infrastructure; you add one entry to tools and get the finished answer back." },
   { id: "v202", domain: 2, front: "allowed_domains — four formatting rules", back: "Bare domain (no https://) · subdomains included · a specific subdomain restricts to it only · cannot be combined with blocked_domains in the same request (400)." },
