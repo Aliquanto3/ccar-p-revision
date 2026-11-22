@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 1: Advanced Agent Architecture and Orchestration (17%) — 18 items
+// CCDV-P Revision — Domain 1: Advanced Agent Architecture and Orchestration (17%) — 21 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d1-01", domain:1, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -147,5 +147,29 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Invoke both skills in the main thread just before it delegates the review to the reviewer",
     "Run the review in a fork of the conversation, where both skills are already in context"],
   correct:[0],
-  explanation:"Subagents do not see skills the main thread invoked. The skills field preloads the listed skills, in full, at startup, so they apply to every review. Adding Skill to the tools list (B) only lets the reviewer decide to invoke skills, which does not guarantee they run each time. Re-invoking in the main thread (C) does not reach a fresh context, and a fork (D) starts from a copy of the conversation that wrote the code." }
+  explanation:"Subagents do not see skills the main thread invoked. The skills field preloads the listed skills, in full, at startup, so they apply to every review. Adding Skill to the tools list (B) only lets the reviewer decide to invoke skills, which does not guarantee they run each time. Re-invoking in the main thread (C) does not reach a fresh context, and a fork (D) starts from a copy of the conversation that wrote the code." },
+{ id:"d1-19", domain:1, type:"multi", select:2, difficulty:"hard", source:"generated",
+  question:"A SaaS company runs one Agent SDK process per tenant, each in its own working directory, with default query() options. An audit shows agents following instructions from the host's ~/.claude/CLAUDE.md and recalling notes written in earlier sessions. Each tenant's agent must get only what the application configures. Which TWO changes are needed?",
+  options:["Pass settingSources as an empty list to each query() call",
+    "Set CLAUDE_CODE_DISABLE_AUTO_MEMORY=1 in the agent's env",
+    "Pass mcpServers as an empty object to each query() call",
+    "Point cwd at a fresh directory for each tenant session"],
+  correct:[0,1],
+  explanation:"Omitting settingSources loads user, project and local settings, CLAUDE.md files included; an empty list stops that. Auto memory loads regardless of settingSources, so it is turned off separately. An empty mcpServers (C) does not even suppress claude.ai connectors. A fresh cwd (D) leaves the user-level files in ~/.claude loading." },
+{ id:"d1-20", domain:1, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An Agent SDK app passes Write in allowedTools so that ordinary file writes run without delay. Its canUseTool callback is meant to send writes under config/prod/ to an on-call engineer for approval, but those writes now run without reaching it. Other writes must stay automatic. What should the team change?",
+  options:["Set permissionMode to acceptEdits so that the file writes are routed through the callback",
+    "Remove the bare Write entry from allowedTools, and have the callback approve other writes",
+    "Add Write(./config/prod/**) to disallowedTools so that those writes stop before running",
+    "Keep the Write entry, and have the callback return deny for any path under config/prod/"],
+  correct:[1],
+  explanation:"A bare tool name in allowedTools approves its calls before canUseTool is consulted, so the callback never sees them. Removing the entry lets every write reach the callback, which approves ordinary ones and escalates config/prod/. acceptEdits (A) approves edits before the callback too. A deny rule (C) blocks those writes with no approval path. The callback (D) is still skipped." },
+{ id:"d1-21", domain:1, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"To save input tokens, a support agent using adaptive thinking strips thinking blocks from Claude's assistant turns before sending the history back during tool use. Since then, multi-step tool calls lose track of the plan they started. The agent must keep its reasoning across tool calls. What should the loop do?",
+  options:["Send the thinking blocks back unmodified with the assistant turns in the tool loop",
+    "Set display to omitted on thinking so that those blocks cost nothing in the loop",
+    "Lower effort to low so that fewer thinking blocks are produced during the tool loop",
+    "Summarize the thinking into a short text block placed in each user turn instead"],
+  correct:[0],
+  explanation:"Thinking blocks carry the reasoning behind tool calls; the docs say to pass them back unmodified, especially during tool use. display omitted (B) empties the text but billing is the same. Low effort (C) reduces reasoning instead of keeping it. A rewritten summary (D) is not the block Claude produced, and text in tool-result turns teaches Claude to end its turn." }
 ]);

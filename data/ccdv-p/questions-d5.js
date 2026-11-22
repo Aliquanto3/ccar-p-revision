@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 5: Evaluation Engineering and Quality Assurance (12%) — 10 items
+// CCDV-P Revision — Domain 5: Evaluation Engineering and Quality Assurance (12%) — 11 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d5-01", domain:5, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -81,5 +81,13 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Fail the run when the JSON result reports more turns than the maximum the eval expects for it",
     "Fail the run when the result text does not mention that the tests were run and passed"],
   correct:[1],
-  explanation:"A headless run is verified by its JSON result: an empty or broken result file, or is_error other than false, means the run itself failed, whatever the checks would say about untouched code. Requiring a change (A) fails the evals that rightly expect none. A turn limit (C) does not detect an error. Trusting the result text (D) checks Claude's claim rather than the outcome." }
+  explanation:"A headless run is verified by its JSON result: an empty or broken result file, or is_error other than false, means the run itself failed, whatever the checks would say about untouched code. Requiring a change (A) fails the evals that rightly expect none. A turn limit (C) does not detect an error. Trusting the result text (D) checks Claude's claim rather than the outcome." },
+{ id:"d5-11", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A team runs its agent evals through the Agent SDK on shared runners. Results differ between runners because some engineers' personal ~/.claude settings and CLAUDE.md files get loaded. The evals must test the repository's own CLAUDE.md, skills and hooks, and nothing personal. Which settingSources value should the harness pass?",
+  options:["A list holding only project",
+    "An empty list, with no sources",
+    "No value, leaving the default",
+    "A list of project and local"],
+  correct:[0],
+  explanation:"project loads the repository's settings, hooks, CLAUDE.md, rules, skills and subagents; user and local carry personal configuration. An empty list (B) drops the configuration under test. Omitting it (C) loads user, project and local. local (D) adds the gitignored CLAUDE.local.md and settings.local.json." }
 ]);

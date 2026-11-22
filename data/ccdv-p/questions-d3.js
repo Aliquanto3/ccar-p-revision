@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 3: Observability and Production Monitoring (12%) — 14 items
+// CCDV-P Revision — Domain 3: Observability and Production Monitoring (12%) — 15 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d3-01", domain:3, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -114,5 +114,13 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "A Primary Owner creates a parent-wide key and the SIEM drops the other organizations",
     "A Primary Owner narrows the scope of an existing parent-wide key to that organization"],
   correct:[1],
-  explanation:"Key scope is a per-key choice made at creation, not fixed by role: a Primary Owner can create a parent-wide key or one scoped to a single child organization, and an Owner key covers that Owner's organization. The Primary Owner is not limited to parent-wide keys (A), a parent-wide key filtered downstream (C) still grants access to everything, and scope is set when the key is created (D)." }
+  explanation:"Key scope is a per-key choice made at creation, not fixed by role: a Primary Owner can create a parent-wide key or one scoped to a single child organization, and an Owner key covers that Owner's organization. The Primary Owner is not limited to parent-wide keys (A), a parent-wide key filtered downstream (C) still grants access to everything, and scope is set when the key is created (D)." },
+{ id:"d3-15", domain:3, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A cost dashboard estimates each request's output cost from the token count of the response text the user sees. For a research agent with adaptive thinking on, the monthly invoice is about 40% above the dashboard. The team wants the dashboard to match billing and show how much goes to reasoning. What should it read?",
+  options:["usage.input_tokens for billing, adding the token count of the visible response text to it",
+    "The token counting endpoint run on each visible response, with the result taken as output",
+    "usage.output_tokens after setting display to summarized to match the visible text",
+    "usage.output_tokens for billing, with output_tokens_details.thinking_tokens shown apart"],
+  correct:[3],
+  explanation:"Thinking tokens are billed as output and can exceed the visible text; usage.output_tokens stays the billing total, and output_tokens_details.thinking_tokens gives the reasoning share. Input tokens (A) are a different line. Counting the visible text (B) misses the thinking. display (C) changes what you see, not what is billed." }
 ]);

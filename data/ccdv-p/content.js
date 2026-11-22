@@ -40,6 +40,13 @@ window.NOTES["ccdv-p"] = {
         "Compaction continues one conversation; memory carries durable facts across sessions (keep preferences, projects; look up volatile details fresh).",
         "Managed agents ship with caching and compaction on by default.",
         "Skills and subagents: a subagent does not see skills invoked in the main thread (a fork starts from a copy of the conversation). Built-ins (Explore, Plan) do not preload skills; custom subagents preload the skills in their skills field, in full, at startup — keep Skill in a restricted tools list to invoke unlisted ones."
+      ]},
+      { title: "Foundations refresher — Agent SDK and adaptive thinking", points: [
+        "Agent SDK = Claude Code's loop, tools, permissions, sessions and hooks as a library in your process; Client SDK = you run the tool loop; Managed Agents = Anthropic hosts it.",
+        "settingSources omitted = user + project + local (CLAUDE.md, settings, skills, hooks). [] = only what you pass in code. Managed settings, ~/.claude.json and auto memory load anyway → multi-tenant: own filesystem per tenant, settingSources [] and CLAUDE_CODE_DISABLE_AUTO_MEMORY=1.",
+        "Permission order: hooks → deny rules → ask rules → permission mode → allow rules → canUseTool. A call approved earlier never reaches canUseTool (bare names in allowedTools, acceptEdits, bypass).",
+        "allowedTools does not constrain bypassPermissions: unlisted tools fall through to the mode. Locked-down headless agent = allowedTools + dontAsk; hide a tool with disallowedTools.",
+        "Adaptive thinking: thinking {type: adaptive} + output_config.effort. Pass thinking blocks back unmodified in tool loops. Thinking billed as output (usage.output_tokens; output_tokens_details.thinking_tokens). Keep thinking config and effort stable to keep the cache."
       ]}
     ],
     pitfalls: [
@@ -99,6 +106,13 @@ window.NOTES["ccdv-p"] = {
         "New schema structure = compilation latency; grammar cached 24 h after last use. Incompatible with citations (400) and with prefill. No PHI in property names, enum/const values or patterns.",
         "Over ~10 minutes: stream (get_final_message) or use batches. An error after a 200 on a stream arrives as an error event.",
         "Batches: results in any order → match by custom_id (1–64 chars, unique)."
+      ]},
+      { title: "Foundations refresher — building MCP servers", points: [
+        "Primitives by control: tools = model-controlled · resources = application-controlled context · prompts = user-controlled templates (slash commands, menus).",
+        "Errors: bad input or business failure → tool result with isError: true and actionable text (Claude self-corrects). JSON-RPC protocol errors = unknown tool, malformed request, server fault.",
+        "outputSchema → structuredContent must conform; also return the serialized JSON in a text block for older clients.",
+        "Annotations (readOnlyHint, destructiveHint…) are untrusted unless the server is trusted: never auto-approve on them for third-party servers.",
+        "Tools that change at runtime: declare tools.listChanged, send notifications/tools/list_changed; the client re-lists. Servers must validate inputs, control access, rate limit, sanitize outputs."
       ]}
     ],
     pitfalls: [
@@ -312,6 +326,14 @@ window.NOTES["ccdv-p"] = {
         "Auto's classifier blocks production deploys and migrations, force pushes, piping downloads into a shell, sending sensitive data out, destroying pre-existing files; it checks intent, not correctness → pair it with a Stop hook running tests.",
         "dontAsk for CI, scheduled jobs and batches with a known tool list; auto rather than bypass for unattended work whose actions cannot be listed.",
         "Verify in proportion to how unsupervised the run was: start with the diff (/code-review, git diff, files outside the plan), not the summary; tests as a Stop hook gate, lint and type check as PostToolUse; headless runs by JSON result and exit code; a cold second opinion from a fresh session or subagent."
+      ]},
+      { title: "Foundations refresher — CLAUDE.md and settings scopes", points: [
+        "CLAUDE.md: managed → user (~/.claude) → project (./CLAUDE.md or .claude/) → local (CLAUDE.local.md). Files walking up from cwd are concatenated, not overridden; subdirectory files load when Claude reads files there.",
+        "@imports resolve from the importing file, four hops max, load at launch. .claude/rules/*.md with paths frontmatter load when matching files are read. Keep each file under ~200 lines; must-happen → hook.",
+        "After /compact the root CLAUDE.md is re-read; nested ones come back when Claude reads in that directory again. claudeMdExcludes (glob on absolute paths) skips files; managed CLAUDE.md cannot be excluded.",
+        "Settings precedence: managed > --settings > .claude/settings.local.json > .claude/settings.json > ~/.claude/settings.json. Lists such as permissions.allow merge across scopes.",
+        "Committed permissions.allow waits for folder trust; deny/ask apply at once. defaultMode auto or bypassPermissions is ignored from project/local files. “Don't ask again” writes to the local file, where an allow does not beat a project ask.",
+        "A -p run skips a broken settings file silently: check with claude doctor and /status."
       ]}
     ],
     pitfalls: [

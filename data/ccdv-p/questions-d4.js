@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 4: Advanced Debugging and Incident Response (10%) — 12 items
+// CCDV-P Revision — Domain 4: Advanced Debugging and Incident Response (10%) — 14 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d4-01", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -97,5 +97,21 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "At the error event delivered inside the stream after the 200 status came back",
     "At the HTTP status of a non-streaming copy of the request, sent once the stream ends"],
   correct:[2],
-  explanation:"Once the API has returned 200, a failure during streaming arrives as an error event in the SSE stream, so status-based handling misses it. The request ID (A) identifies a request for support but signals nothing. A max_tokens stop (B) is a normal truncation with a stop reason, not this silent failure. Sending a second request (D) doubles the cost and still says nothing about the stream." }
+  explanation:"Once the API has returned 200, a failure during streaming arrives as an error event in the SSE stream, so status-based handling misses it. The request ID (A) identifies a request for support but signals nothing. A max_tokens stop (B) is a normal truncation with a stop reason, not this silent failure. Sending a second request (D) doubles the cost and still says nothing about the stream." },
+{ id:"d4-13", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A team moves its requests to adaptive thinking and sends thinking as {\"type\": \"adaptive\", \"effort\": \"medium\"}. The API rejects the requests with a 400 invalid_request_error. They want adaptive thinking at medium effort. What should the request contain?",
+  options:["thinking with type enabled, and effort medium kept inside the thinking object",
+    "thinking with type adaptive, and effort medium set under output_config",
+    "thinking with type adaptive, and output_config.effort set to the value adaptive",
+    "thinking with type adaptive, and budget_tokens set where effort used to be"],
+  correct:[1],
+  explanation:"Adaptive thinking is thinking: {type: adaptive}, and effort is set separately at output_config.effort. Effort does not belong inside the thinking object (A), adaptive is a thinking mode, not an effort value (C), and budget_tokens (D) is the legacy manual budget, not effort." },
+{ id:"d4-14", domain:4, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"After a merge, a nightly claude -p job stops running the team's PreToolUse hooks from .claude/settings.json. The job log shows no error, and interactive sessions on a developer laptop open with a Settings Error dialog about the same file. The team must find and fix what is wrong. What should it do first?",
+  options:["Copy the hooks into CLAUDE.md so the job keeps following those rules",
+    "Move the hooks to settings.local.json, which -p runs give priority",
+    "Run claude doctor to see what was rejected, then fix the file's JSON",
+    "Run the job with dontAsk so that calls without a hook are denied"],
+  correct:[2],
+  explanation:"A -p run shows no dialog: Claude Code skips the broken file and continues, so the hooks silently disappear. claude doctor lists what was rejected (here, invalid JSON such as a trailing comma). CLAUDE.md (A) is a request, not a hook. The local file (B) is not the fix for a broken shared file. dontAsk (D) changes approvals but leaves the hooks missing." }
 ]);

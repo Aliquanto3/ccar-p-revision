@@ -50,6 +50,15 @@ window.FLASHCARDS["ccdv-p"] = [
   { id: "v603", domain: 6, front: "Cache fields both 0, no error", back: "Prefix below the minimum cacheable length (512 tokens on current models) — or a breakpoint on content that changes." },
   { id: "v604", domain: 6, front: "Batch requests reject…", back: "stream, speed (fast mode), fallbacks, max_tokens 0. Caching works and stacks with −50%." },
   { id: "v605", domain: 6, front: "Effort defaults and the cache trap", back: "high on most models, medium on Opus 5.5 / Haiku 5.5. Changing top-level effort mid-conversation can invalidate the cache." },
+  // D1 / D2 / D8 — Foundations refresher (Claude Code config, Agent SDK, MCP servers)
+  { id: "v110", domain: 1, front: "Agent SDK permission order", back: "Hooks → deny rules → ask rules → permission mode → allow rules → canUseTool. Anything approved earlier never reaches canUseTool." },
+  { id: "v111", domain: 1, front: "allowedTools + bypassPermissions", back: "Does not restrict: unlisted tools fall through to bypass and run. Read-only headless agent = allowedTools + dontAsk (or disallowedTools)." },
+  { id: "v112", domain: 1, front: "settingSources: omitted vs []", back: "Omitted = user + project + local. [] = only what the code passes. Managed settings, ~/.claude.json and auto memory still load." },
+  { id: "v214", domain: 2, front: "MCP: isError vs JSON-RPC error", back: "Bad input or business failure → result with isError: true (Claude can self-correct). Protocol error → unknown tool, malformed request, server fault." },
+  { id: "v215", domain: 2, front: "MCP primitives — who controls them?", back: "Tools: the model. Resources: the application. Prompts: the user (slash commands, menus)." },
+  { id: "v805", domain: 8, front: "Claude Code settings precedence", back: "Managed > --settings > settings.local.json > project settings.json > user settings.json. Lists merge." },
+  { id: "v806", domain: 8, front: "Committed allow rules not applied for a new teammate", back: "They wait for folder trust. Deny and ask rules apply at once." },
+  { id: "v807", domain: 8, front: "CLAUDE.local.md and worktrees", back: "Exists only in its worktree: import a home-directory file (@~/.claude/…) instead." },
   // D2 — Production Integration, Reliability, and Knowledge Grounding (module 1)
   { id: "v201", domain: 2, front: "Web search: what does your code NOT have to do, and why?", back: "Write a handler or send a tool_result. It is a server tool running on Anthropic's infrastructure; you add one entry to tools and get the finished answer back." },
   { id: "v202", domain: 2, front: "allowed_domains — four formatting rules", back: "Bare domain (no https://) · subdomains included · a specific subdomain restricts to it only · cannot be combined with blocked_domains in the same request (400)." },

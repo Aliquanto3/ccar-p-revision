@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 7: Runtime Guardrails and Production Security (11%) — 21 items
+// CCDV-P Revision — Domain 7: Runtime Guardrails and Production Security (11%) — 22 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d7-01", domain:7, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -169,5 +169,13 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Keep the engineer's credentials, and tell the agent not to open folders outside its job",
     "Give each team member a copy of the agent that runs with that member's own credentials"],
   correct:[0],
-  explanation:"A multiplayer agent operates as itself: its own identity and credentials let the team decide what it can reach, and its memory and context build up across everyone who works with it. Narrowing the engineer's own access (B) changes a person's rights to fix an agent's. An instruction (C) is not a boundary. Per-member copies (D) are single-player tools again, each with its own memory." }
+  explanation:"A multiplayer agent operates as itself: its own identity and credentials let the team decide what it can reach, and its memory and context build up across everyone who works with it. Narrowing the engineer's own access (B) changes a person's rights to fix an agent's. An instruction (C) is not a boundary. Per-member copies (D) are single-player tools again, each with its own memory." },
+{ id:"d7-22", domain:7, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A headless code-search agent built on the Agent SDK sets allowedTools to Read, Grep and Glob with permissionMode bypassPermissions, so that it never stops for approval. In a review, logs show it ran Bash and Write calls. The agent must stay read-only and must not prompt. What should change?",
+  options:["Keep bypassPermissions and check each call in canUseTool",
+    "Keep allowedTools and set permissionMode to acceptEdits",
+    "Keep bypassPermissions and copy the list to settings.json",
+    "Keep allowedTools and set permissionMode to dontAsk"],
+  correct:[3],
+  explanation:"allowedTools pre-approves the listed tools; unlisted ones fall through to the permission mode, where bypassPermissions approves them. dontAsk denies anything that would prompt, so only the listed tools (and calls that need no approval) run. Under bypassPermissions, canUseTool (A) is skipped for approved calls. acceptEdits (B) auto-approves writes. An allow list in settings.json (C) changes nothing for unlisted tools." }
 ]);
