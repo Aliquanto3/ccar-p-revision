@@ -211,6 +211,11 @@ window.NOTES["ccdv-p"] = {
       "Online quality measurement — live-traffic sampling, A/B tests, feedback loops, metrics matched to task type (extraction, generation, agentic, retrieval-grounded)"
     ],
     sections: [
+      { title: "Graders and judges (from the Foundations course)", points: [
+        "Grader by output shape: exact match (one correct form) · code check (parse, range, required field; free, run on every commit) · LLM judge (open-ended quality; costly and noisy, run on a schedule).",
+        "Judge hygiene: reasoning (strengths, weaknesses) before the score, or scores drift to ~6 · calibrate against human labels and fix the rubric when agreement is low · pairwise judges: evaluate both orders, keep order-consistent verdicts · pin the judge model and re-run the labeled set when it changes.",
+        "Read per-case results, not just the average; change one lever at a time; grow coverage with model-generated edge cases that a human checks (validation checks shape, not correctness)."
+      ]},
       { title: "Continuous evals in CI", points: [
         "Evals are the AI-native stage gate: the suite runs non-interactively in CI on a schedule and on any change to CLAUDE.md, skills or hooks (paths CLAUDE.md, .claude/**, evals/**), because that configuration steers the agent.",
         "Build the suite from 20–50 real tasks with accepted outcomes; each eval = prompt + checks (tests pass, lint clean, behavior unchanged, policy followed). Each production incident gets an eval, written by the team that owned it.",

@@ -42,4 +42,22 @@ window.CERTS = {
     }
   }
 };
+window.CERTS["ccdv-f"] = {
+  code: "CCDV-F",
+  name: "Claude Certified Developer – Foundations",
+  storagePrefix: "ccdvf:",
+  guide: { label: "Exam Guide v1.1 (November 2026)", url: "https://cc.sj-cdn.net/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1794946716/Claude_Certified_Developer_-_Foundations_Exam_Guide.pdf" },
+  exam: { items: 53, minutes: 120, pass: 720, scaleMin: 100, scaleMax: 1000, fee: "$125", note: "proctored (Pearson VUE, OnVUE or test center)" },
+  targetBank: 160,
+  domains: {
+    1: { name: "Agents and Workflows", weight: 14.7 },
+    2: { name: "Applications and Integration", weight: 33.1 },
+    3: { name: "Claude Code", weight: 3.1 },
+    4: { name: "Eval, Testing, and Debugging", weight: 2.6 },
+    5: { name: "Model Selection and Optimization", weight: 16.8 },
+    6: { name: "Prompt and Context Engineering", weight: 11.0 },
+    7: { name: "Security and Safety", weight: 8.1 },
+    8: { name: "Tools and MCPs", weight: 10.6 }
+  }
+};
 window.DEFAULT_CERT = "ccdv-p";

@@ -69,6 +69,8 @@ window.FLASHCARDS["ccdv-p"] = [
   { id: "v811", domain: 8, front: "Before AI review gates merges", back: "Shadow mode: rate findings against human reviewers' verdicts; gate on severity counts only once calibrated. Code owner approval stays." },
   { id: "v812", domain: 8, front: "/goal pitfall", back: "The evaluator reads only the transcript: state done as output Claude produces (a test run, a health-check result)." },
   { id: "v813", domain: 8, front: "Cloud scheduled task limits", back: "Research preview · at most hourly · fresh clone of the default branch · pushes to claude/… unless the prompt names a branch." },
+  { id: "v504", domain: 5, front: "Pairwise judge prefers the first answer", back: "Evaluate each pair in both orders; count only verdicts that survive the swap." },
+  { id: "v505", domain: 5, front: "Judge trend jumps with no product change", back: "Judge drift: pin the judge model, re-run the human-labeled set, compare agreement." },
   // D2 — Production Integration, Reliability, and Knowledge Grounding (module 1)
   { id: "v201", domain: 2, front: "Web search: what does your code NOT have to do, and why?", back: "Write a handler or send a tool_result. It is a server tool running on Anthropic's infrastructure; you add one entry to tools and get the finished answer back." },
   { id: "v202", domain: 2, front: "allowed_domains — four formatting rules", back: "Bare domain (no https://) · subdomains included · a specific subdomain restricts to it only · cannot be combined with blocked_domains in the same request (400)." },
