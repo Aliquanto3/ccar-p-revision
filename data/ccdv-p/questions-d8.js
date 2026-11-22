@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 8: Agent Fleet Operations for Software Delivery (10%) — 1 items
+// CCDV-P Revision — Domain 8: Agent Fleet Operations for Software Delivery (10%) — 5 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d8-01", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -8,5 +8,38 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Keep the project files and run the production job with the bypassPermissions mode for release calls",
     "Keep the project files and ask the platform team to drop both managed flags on the pipeline runners"],
   correct:[0],
-  explanation:"With allowManagedHooksOnly only hooks from managed settings run, and with allowManagedMcpServersOnly only servers on the managed allowlist load: the gate and the servers must move there. User settings (B) are ignored under the same flag, bypassing permissions (C) removes the production gate, and dropping the flags (D) solves the symptom by leaving the organization's policy." }
+  explanation:"With allowManagedHooksOnly only hooks from managed settings run, and with allowManagedMcpServersOnly only servers on the managed allowlist load: the gate and the servers must move there. User settings (B) are ignored under the same flag, bypassing permissions (C) removes the production gate, and dropping the flags (D) solves the symptom by leaving the organization's policy." },
+{ id:"d8-02", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A security team must make its secure-api-review skill apply on every developer machine. Several repositories already contain an older project skill with the same name and outdated rules. Which distribution makes the security team's version win everywhere?",
+  options:["Publish the skill in a plugin marketplace and ask each team to install it in its repos",
+    "Place the skill in .claude/skills of the managed settings directory on each machine",
+    "Commit the skill to each repository's .claude/skills folder and remove the old copies",
+    "Copy the skill into each engineer's personal skills folder with the onboarding script"],
+  correct:[1],
+  explanation:"Enterprise skills deployed through managed settings (for example /etc/claude-code/.claude/skills/ on Linux) take the highest priority and override personal and project skills of the same name, which fits standards that must apply. Plugin skills are namespaced and installation is voluntary (A), per-repo commits (C) depend on each team and miss new repos, and copies in personal folders (D) drift machine by machine without overriding anything by rule." },
+{ id:"d8-03", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An administrator wants engineers to add plugin marketplaces only from the acme-corp/approved-plugins GitHub repository and from a marketplace.json served at plugins.example.com. A draft policy that names an npm package has no effect. What should the managed settings contain?",
+  options:["strictKnownMarketplaces with a github entry for the repository and a url entry for the file",
+    "strictKnownMarketplaces with an npm entry for the package that bundles the approved plugins",
+    "A project settings file in each repository that lists the two marketplaces engineers may add",
+    "A PreToolUse hook that denies plugin installs unless the plugin name has an approved prefix"],
+  correct:[0],
+  explanation:"strictKnownMarketplaces in managed settings limits which marketplaces people can add and install from; entries name a source, such as github with a repo or url with the marketplace.json address. An npm entry (B) matches nothing, project settings (C) are not an organization-wide control, and plugin installation is not a tool call that a PreToolUse hook governs (D)." },
+{ id:"d8-04", domain:8, type:"multi", select:2, difficulty:"hard", source:"generated",
+  question:"A platform team runs many Claude Code sessions in parallel on a monorepo. It wants the full test suite enforced and wants a human to approve changes that touch the payments package before they ship. Which TWO placements follow the build-phase guidance?",
+  options:["Run the full test suite at the commit or the pull request rather than in an edit hook",
+    "Put the human approval for payments changes in the deployment gates, not in build hooks",
+    "Run the full test suite in a PostToolUse hook on each edit so drift is caught at once",
+    "Add a PreToolUse hook that asks the engineer to approve each edit in the payments package",
+    "Run the formatter as a pull-request check rather than after each file edit in a session"],
+  correct:[0,1],
+  explanation:"Build-phase hooks run on every matching action, so they must be fast and scoped to the changed file; heavier checks such as the full suite belong at the commit or the PR. An approval prompt during the build puts a person on the critical path of every parallel session, so approval belongs with the deployment gates. A suite in an edit hook (C) and per-edit approval prompts (D) stall sessions, while the formatter (E) is exactly the cheap per-edit check build hooks are for." },
+{ id:"d8-05", domain:8, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"The API security policy, encoded as a skill committed in the repository, changes after an audit. The organization wants the new rule applied consistently from engineers' next sessions and traceable to the policy owner. What process fits?",
+  options:["Update the skill, then ask engineers to invoke it by hand at the start of each session",
+    "Post the change in the team channel, ask engineers to edit their local copies, and check",
+    "Add the new rule to each engineer's personal CLAUDE.md and leave the skill as it is now",
+    "Update the skill folder by pull request, get the policy owner's sign-off, and merge it"],
+  correct:[3],
+  explanation:"A skill is versioned institutional knowledge: change it like code, with the policy owner signing off, and engineers pick up the new version automatically in their next session. Local copies (B) drift, personal CLAUDE.md lines (C) split the source of truth from the skill, and manual invocation (A) adds a step the skill's description already handles by triggering on the relevant tasks." }
 ]);

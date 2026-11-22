@@ -11,6 +11,46 @@ window.NOTES["ccdv-p"] = {
       "Durable execution and state management — session persistence, checkpointing, resumability, memory architecture for long-running agents that survive interruption, restart and model version change",
       "Architecture selection at scale — use production cost, reliability and quality data to evolve a running system between workflow and agentic patterns; choose harness, framework and reusable-pattern standards",
       "Context and memory architecture — compaction and editing, persistent memory, cache-safe instruction changes mid-conversation, keeping large tool catalogs out of the context window"
+    ],
+    sections: [
+      { title: "Subagents — when the intermediate work does not matter", points: [
+        "A subagent runs in its own context window: its custom system prompt plus a task description written by the parent. Only a summary returns; the full run is saved in a separate transcript. Trade-off: the main thread does not see how the conclusion was reached.",
+        "Built-ins: general-purpose (explore + act), Explore (fast codebase search), Plan (research during plan mode). Custom subagents add their own system prompt and tool list.",
+        "Name and description of every subagent sit in the main agent's system prompt: they decide when it is launched AND guide the input prompt the main agent writes (“tell the agent precisely which files to review”, “return sources that can be cited”).",
+        "Most important improvement: an output format in the system prompt. It creates a stopping point and a usable report; without it, subagents run too long.",
+        "Add an “Obstacles Encountered” section (setup quirks, workarounds, special flags, problem imports) so the main thread does not rediscover them.",
+        "Least privilege: research = Glob, Grep, Read · reviewer = + Bash for git diff, no Edit/Write · styling/modification = Edit and Write.",
+        "Use for: research and exploration, code review (fresh context, team standard in the prompt), tasks needing a custom system prompt (copywriting, styling that reads the design system first).",
+        "Avoid: “expert” personas (no new capability), sequential pipelines where each step depends on the previous one (lost in handoff), test runners (hide the failure output). Decision rule: does the intermediate work matter? Yes → main thread."
+      ]},
+      { title: "Tool use and Claude Managed Agents", points: [
+        "A tool = name + description + input_schema in the tools array. Claude requests, your code executes, the result returns as a tool_result tied to tool_use_id. Vague descriptions are the first cause of misfires.",
+        "Several tool_use blocks in one turn → all their tool_result blocks go back together in the next user message. Dispatch on the tool name; a new tool = array entry + switch case.",
+        "Tool runner (beta, all SDKs): define each tool once (TypeScript: betaZodTool, Zod ≥ 3.25.0), the runner handles the loop and validates inputs; await it for the final message.",
+        "Managed agents: the agent loop hosted on Anthropic's infrastructure, in an isolated container (files, bash, web search). Primitives in order: Agent (model, system prompt, tools — reusable) → Environment (cloud or self-hosted, networking) → Session (one run, the unit of work, own sandbox) → Events (in and out).",
+        "agent_toolset_20260401 = bundled file, bash and web tools. Networking limited → sandbox and web tools reach only allowed_hosts; unrestricted only for hosts you cannot list in advance.",
+        "Open the event stream BEFORE sending the user.message kickoff: the stream only delivers later events. Reconnect: new stream + list past events + skip live events already listed (history is server-side).",
+        "Key events: agent.message, agent.tool_use, session.status_idle. On idle, check stop_reason.type: end_turn (finished or interrupted) vs requires_action (a tool call, e.g. a custom tool, awaits your answer).",
+        "Building blocks: custom tools on your back end, MCP (Slack, Asana), memory store read before / written after a run, outcomes (rubric + separate grader in its own context, Claude iterates), multi-agent coordination (coordinator + specialists in own contexts on a shared file system), permission policies for sensitive actions.",
+        "Choose managed agents when the loop runs long, touches many files, keeps state or must survive a connection drop; keep your own loop when you want full control."
+      ]},
+      { title: "Context management", points: [
+        "Context = system prompt, message history, tool definitions and results, files and skills, thinking blocks. Re-sent and paid on every turn; a full window makes the request fail.",
+        "Four patterns: just-in-time (design pattern: load now, pull the rest with tools) · server-side compaction (context_management edit compact_20260112, beta compact-2026-01-12, triggers past a threshold, lossy) · prompt caching (stable prefix reused at a fraction of the cost) · memory tool (memory directory via tool calls, storage backend you implement; an instruction to check it is auto-injected).",
+        "Compaction continues one conversation; memory carries durable facts across sessions (keep preferences, projects; look up volatile details fresh).",
+        "Managed agents ship with caching and compaction on by default.",
+        "Skills and subagents: a subagent does not see skills invoked in the main thread (a fork starts from a copy of the conversation). Built-ins (Explore, Plan) do not preload skills; custom subagents preload the skills in their skills field, in full, at startup — keep Skill in a restricted tools list to invoke unlisted ones."
+      ]}
+    ],
+    pitfalls: [
+      "Making a subagent ask the main agent for missing details: the description must shape the delegation prompt instead.",
+      "Capping turns instead of defining an output format.",
+      "Chaining reproduce → debug → fix subagents for one bug.",
+      "Sending the managed-agent kickoff before opening the event stream.",
+      "Treating every session.status_idle as done without reading stop_reason.type.",
+      "Sending one user message per tool_result when Claude called several tools in one turn.",
+      "Expecting the memory tool to host storage, or caching to carry state across sessions.",
+      "Assuming a subagent inherits skills the main thread invoked."
     ]
   },
   2: {
@@ -94,6 +134,26 @@ window.NOTES["ccdv-p"] = {
       "Runtime guardrail systems — input/output filtering, PII redaction, hook-based policy, destructive-action prevention, sandboxing, approval gates, refusal handling, deterministic enforcement for irreversible actions, false-positive/negative tuning",
       "Threat defense and adversarial testing — prompt injection, tool and memory poisoning, exfiltration paths, the private data + untrusted input + external communication combination; defense-in-depth, red teaming, secure MCP config (OWASP LLM Top 10, NIST AI RMF and GenAI Profile)",
       "Identity, secrets and audit — agent identity, workload identity federation instead of static keys, secrets management, least-privilege tools, audit logging of security-relevant actions"
+    ],
+    sections: [
+      { title: "Skills are advisory, hooks are deterministic", points: [
+        "A skill makes a policy likely to be applied while code is written; nothing forces compliance. A rule that must always hold needs a hook at the edit plus the same check required on the pull request.",
+        "Build-phase hooks: block edits to protected paths, run formatter/linter after edits, keep credentials out of the diff, back skill rules. Keep them fast and scoped to the changed file; heavy checks go to commit/PR.",
+        "PostToolUse cannot undo the edit: exit code 2 shows stderr to Claude, which can fix the line. An empty args list runs the script directly instead of through a shell.",
+        "An Edit|Write hook does not fire when a shell command rewrites the file: the required PR check covers that route.",
+        "Human approval hooks belong at deployment gates, not in build hooks: they would put a person on the critical path of every parallel session."
+      ]},
+      { title: "Plugins — trust before install", points: [
+        "A plugin runs code with your privileges; its hooks fire on every matching call. Read its hooks, agents and MCP servers before enabling it. Listed on a marketplace ≠ trusted (community = submitted by the author; official = curated separately).",
+        "Components run alongside yours: hooks stack (both PreToolUse hooks fire); skills, agents and commands are namespaced /plugin-name:skill.",
+        "A plugin's settings.json is honored for two keys only (agent, subagent status line). The agent key promotes one of its subagents — prompt, tools, model — to the main thread."
+      ]}
+    ],
+    pitfalls: [
+      "Treating a well-triggered skill as enforcement.",
+      "Expecting exit code 2 of a PostToolUse hook to roll back the edit.",
+      "Relying on an Edit|Write hook alone while Bash can rewrite files.",
+      "Assuming a plugin's hooks replace yours, or that a marketplace listing means vetted."
     ]
   },
   8: {
@@ -103,6 +163,21 @@ window.NOTES["ccdv-p"] = {
       "Verification and AI code review — AI review introduced in shadow mode, calibrated against human review before it gates merges, human oversight design",
       "Unattended and event-driven operations — agents running toward goals, on schedules or as event responders (CI/CD incident first response), with checkpointing, notification and escalation",
       "Organization-wide configuration — managed settings and policies, MCP allowlists, telemetry, gateway routing, quality and safety bar for sharing prompts, Skills and MCP servers"
+    ],
+    sections: [
+      { title: "Distributing skills and plugins", points: [
+        "Repository: .claude/skills/<name>/SKILL.md, shared through Git, updates on next pull — team standards, project workflows.",
+        "Plugin: skills/, agents/, hooks/hooks.json and .mcp.json at the root, optional .claude-plugin/plugin.json (only name is required; it namespaces skills; version it). Distributed through marketplaces (/plugin marketplace add org/repo).",
+        "Managed settings: skills in .claude/skills of the managed settings directory (e.g. /etc/claude-code/.claude/skills/) take the highest priority and override personal and project skills of the same name — for what “must” apply.",
+        "strictKnownMarketplaces (managed settings) limits the marketplaces people can add: entries such as {source: github, repo} or {source: url, url}.",
+        "Skill as institutional knowledge: one policy, named owner, written source of truth; change the skill by PR with the owner's sign-off; engineers get it in their next session. Test that it triggers on differently phrased requests.",
+        "Measure: leading = time from policy approval to skill merge; lagging = PR review findings citing the policy, trending to zero."
+      ]}
+    ],
+    pitfalls: [
+      "Distributing a mandatory standard as a plugin people may or may not install.",
+      "Expecting a same-name project skill to beat the managed one.",
+      "Running the full test suite or approval prompts in build-phase hooks."
     ]
   }
 };

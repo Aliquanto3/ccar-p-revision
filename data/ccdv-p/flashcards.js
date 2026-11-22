@@ -2,6 +2,21 @@
 // Schema: {id, domain, front, back}
 window.FLASHCARDS = window.FLASHCARDS || {};
 window.FLASHCARDS["ccdv-p"] = [
+  // D1 — Advanced Agent Architecture and Orchestration (module 2)
+  { id: "v101", domain: 1, front: "What does a subagent start with, and what comes back?", back: "Its own system prompt plus a task description written by the parent, in a fresh context window. Only a summary returns; the full run goes to a separate transcript." },
+  { id: "v102", domain: 1, front: "Two roles of a subagent's description", back: "It decides when the main agent launches the subagent, and it guides the input prompt the main agent writes when delegating." },
+  { id: "v103", domain: 1, front: "Single most important subagent improvement", back: "An output format in its system prompt: a natural stopping point and a report the main thread can use. Add an Obstacles Encountered section." },
+  { id: "v104", domain: 1, front: "Three subagent anti-patterns", back: "Expert personas (no new capability), sequential pipelines with dependent steps (lost in handoffs), test runners (hide failure output)." },
+  { id: "v105", domain: 1, front: "Managed agents — the four primitives in order", back: "Agent (model, system prompt, tools; reusable) → Environment (sandbox, networking) → Session (one run, unit of work) → Events (in and out)." },
+  { id: "v106", domain: 1, front: "Managed agents: stream or kickoff first?", back: "Open the event stream first: it only delivers events that occur after it opens. Then send the user.message event." },
+  { id: "v107", domain: 1, front: "session.status_idle — how to know if the work is done?", back: "Read stop_reason.type: end_turn = turn finished (or interrupted); requires_action = a tool call needs your answer." },
+  { id: "v108", domain: 1, front: "Four context-management patterns", back: "Just-in-time (design pattern) · server-side compaction (context_management edit compact_20260112) · prompt caching · memory tool (your storage backend)." },
+  { id: "v109", domain: 1, front: "Do subagents get the skills the main thread invoked?", back: "No. Custom subagents preload skills listed in their skills field (in full, at startup); keep Skill in their tools to invoke others. Built-ins don't preload." },
+  // D7 / D8 — skills, hooks, plugins (module 2)
+  { id: "v701", domain: 7, front: "PostToolUse hook exits with code 2 — what happens?", back: "The edit stays (a post hook cannot undo it); stderr is shown to Claude, which can fix the line." },
+  { id: "v702", domain: 7, front: "Which keys of a plugin's settings.json does Claude Code honor?", back: "Only two: agent (promotes a plugin subagent to the main thread) and the subagent status line key." },
+  { id: "v801", domain: 8, front: "Which skill wins on a name clash?", back: "Enterprise skills from managed settings: they override personal and project skills of the same name." },
+  { id: "v802", domain: 8, front: "strictKnownMarketplaces", back: "Managed setting that limits which marketplaces people can add and install plugins from (entries like source github + repo, or source url + url)." },
   // D2 — Production Integration, Reliability, and Knowledge Grounding (module 1)
   { id: "v201", domain: 2, front: "Web search: what does your code NOT have to do, and why?", back: "Write a handler or send a tool_result. It is a server tool running on Anthropic's infrastructure; you add one entry to tools and get the finished answer back." },
   { id: "v202", domain: 2, front: "allowed_domains — four formatting rules", back: "Bare domain (no https://) · subdomains included · a specific subdomain restricts to it only · cannot be combined with blocked_domains in the same request (400)." },

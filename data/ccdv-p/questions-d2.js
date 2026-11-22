@@ -1,4 +1,4 @@
-// CCDV-P Revision — Domain 2: Production Integration, Reliability, and Knowledge Grounding (20%) — 12 items
+// CCDV-P Revision — Domain 2: Production Integration, Reliability, and Knowledge Grounding (20%) — 13 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
 { id:"d2-01", domain:2, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -97,5 +97,13 @@ window.BANK["ccdv-p"] = (window.BANK["ccdv-p"] || []).concat([
     "Keep rollback pre-approved in production and exercise it on a regular schedule in staging",
     "Allow rollback only once status shows the error rate stayed over the band for an hour"],
   correct:[2],
-  explanation:"Rollback is a runbook approved in advance: one command the agent can run, rehearsed regularly in staging, so the closing-the-loop control can call it without waiting for a person. Gating it (B) or handing it to on-call (A) puts a human in the recovery path at night, and an hour-long confirmation window (D) misses the minutes-level target." }
+  explanation:"Rollback is a runbook approved in advance: one command the agent can run, rehearsed regularly in staging, so the closing-the-loop control can call it without waiting for a person. Gating it (B) or handing it to on-call (A) puts a human in the recovery path at night, and an hour-long confirmation window (D) misses the minutes-level target." },
+{ id:"d2-13", domain:2, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A hand-written agent loop pushes one user message per tool_result. When Claude calls get_weather and get_forecast in the same turn, the next request fails. The team wants to keep both lookups in a single turn for latency. What should the loop send?",
+  options:["One tool_result for the first tool_use block and the other call retried on the next turn",
+    "One user message per tool_result, sent in the order in which the tool_use blocks appeared",
+    "One user message holding a tool_result block for each tool_use block, each tied to its id",
+    "One user message holding both results merged in a single tool_result for the first tool id"],
+  correct:[2],
+  explanation:"Every tool_use block in the assistant turn needs its tool_result, tied by tool_use_id, and they go back together in the next user message. Separate user messages (B) leave the first follow-up missing a result, answering only one call (A) leaves the other unanswered and adds a turn, and a merged result (D) answers one id while orphaning the other." }
 ]);

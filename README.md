@@ -24,9 +24,9 @@ Only multi-constraint scenario items ("hard" level) are served: they are the clo
 | Cert | Live items | Notes |
 |---|---|---|
 | CCAR-P | 217 | 214 hard + 3 official Exam Guide samples |
-| CCDV-P | 18 | 3 official samples + 15 items from module 1 (D2 mainly) — target ~240 |
+| CCDV-P | 48 | 3 official samples + 45 items from course modules 1–2 — target ~240 |
 
-Every generated item passes the anti-cue linter (`node tools/lint-cues.js --cert ccdv-p`, rules R1–R6: no justification clauses in options, no absolutes in distractors only, symmetric punctuation / enumeration / register, option lengths within ±15 % of the median). Official samples (`exam-guide-sample`) are excluded from the lint and never edited.
+CCDV-P items are written per course module in `tools/ccdv-p/src/mNN.js` (key first) and built with `node tools/ccdv-p/build.js`, which rotates key positions and writes `data/ccdv-p/`. Every generated item passes the anti-cue linter (`node tools/lint-cues.js --cert ccdv-p`, rules R1–R6: no justification clauses in options, no absolutes in distractors only, symmetric punctuation / enumeration / register, option lengths within ±15 % of the median). Official samples (`exam-guide-sample`) are excluded from the lint and never edited.
 
 ## Run locally
 
