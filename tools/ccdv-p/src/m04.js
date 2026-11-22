@@ -1,5 +1,6 @@
 // Module 4 — Evaluation Engineering and Quality Assurance (continuous evals in CI, tool definitions Claude picks)
 // Key written first; build.js rotates it.
+// ---------- tool definitions (diagnosis of tool misuse) ----------
 module.exports = [
 { id:"d5-03", domain:5, type:"single", select:1, source:"generated",
   question:"A team keeps a suite of 40 agent evals that run Claude Code non-interactively in CI. The agent's behavior is steered by CLAUDE.md, skills and hooks, which change several times a week, and the API budget for eval runs is tight. Regressions must be caught before a configuration change merges, and drift from model or dependency updates within a day. When should the suite run?",
@@ -66,7 +67,6 @@ module.exports = [
     "Fail the run when the result text does not mention that the tests were run and passed"],
   correct:[0],
   explanation:"A headless run is verified by its JSON result: an empty or broken result file, or is_error other than false, means the run itself failed, whatever the checks would say about untouched code. Requiring a change (B) fails the evals that rightly expect none. A turn limit (C) does not detect an error. Trusting the result text (D) checks Claude's claim rather than the outcome." },
-// ---------- tool definitions (diagnosis of tool misuse) ----------
 { id:"d4-02", domain:4, type:"single", select:1, source:"generated",
   question:"An internal assistant's project tool expects job numbers like MEG-2026-0142, but Claude often passes 0142 when users say \"the 0142 job\". Tool choice is otherwise correct. The tool's code belongs to another team and cannot change, and the team wants to change only the part of the definition at fault. What should it change?",
   options:["The parameter's own description with the full format, plus input_examples showing it",
@@ -84,13 +84,13 @@ module.exports = [
   correct:[0],
   explanation:"A good description cannot help much when several tools do nearly the same job: combine the overlapping four into one tool with a fields parameter, and keep the tools that do different jobs. Merging all six (B) folds distinct jobs together and touches the part that works. Longer descriptions (C) still leave four overlapping tools to choose between. Forcing one tool (D) breaks every question it does not answer." },
 { id:"d4-04", domain:4, type:"single", select:1, source:"generated",
-  question:"After a team adds input_examples to a tool definition, every request that includes the tool fails with a 400 error. One example passes project_id as the number 142, while the schema declares project_id as a string in the format MEG-YYYY-NNNN. What should the team do?",
-  options:["Make each example valid against the input_schema, here a full MEG-YYYY-NNNN string",
-    "Change project_id in the schema to accept numbers as well, to match the example given",
-    "Move the examples into the tool's description text, where they are not validated",
-    "Remove project_id from required so that examples without the full string are accepted"],
+  question:"After a team adds input_examples to a tool, every request with the tool fails with a 400 error. One example passes project_id as the number 142, while the schema declares it a string in the format MEG-YYYY-NNNN. In testing, the examples halved wrong-format calls, so the team wants to keep them. What should it do?",
+  options:["Make each example valid against the schema, with a full MEG-YYYY-NNNN string",
+    "Add a pattern for MEG-YYYY-NNNN to the schema and leave the numeric example as is",
+    "Describe the format in project_id's description and remove the input_examples",
+    "Set strict to true on the tool so that the numeric example is read as a string"],
   correct:[0],
-  explanation:"Each example in input_examples must be valid against the input_schema, or the API returns a 400 error; the fix is a correct example, which also shows Claude the full format. Widening the schema (B) or relaxing required (D) teaches Claude the wrong input. Examples in prose (C) avoid the error but drop the structured example the field exists for." },
+  explanation:"Each example in input_examples must be valid against the input_schema, or the API returns a 400; a correct example keeps the benefit. A pattern (B) makes the numeric example even more clearly invalid. Moving to the description (C) drops the examples the team wants. strict (D) validates Claude's calls, not the examples." },
 { id:"d4-05", domain:4, type:"multi", select:2, source:"generated",
   question:"A tool's description says what the tool returns and what each parameter means, in two sentences. Claude still calls it for questions it cannot answer, such as invoices. Which TWO additions to the description follow the guidance?",
   options:["When to use the tool, when not to, and which tool to use instead",

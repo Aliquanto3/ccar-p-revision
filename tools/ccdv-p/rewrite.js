@@ -1,5 +1,5 @@
-/* Replace items of tools/ccdv-p/src/mNN.js by id with the versions in a rewrite file (key first),
-   keeping each source file's header comment. Usage: node tools/ccdv-p/rewrite.js <rewrite-file.js> */
+/* Replace items of tools/<cert>/src/mNN.js by id with the versions in a rewrite file (key first),
+   keeping each source file's header comment. Usage: node tools/<cert>/rewrite.js <rewrite-file.js> */
 const fs = require('fs'), path = require('path');
 const rw = require(path.resolve(process.argv[2]));
 const byId = new Map(rw.map(q => [q.id, q]));

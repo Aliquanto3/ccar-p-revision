@@ -1,7 +1,7 @@
 // Official samples (Exam Guide v1.1) + course module 1 — MSO Foundations (tokens, context, sampling,
 // model options, prompting modes, SDK/REST, streaming, async, batches). Key written first.
-module.exports = [
 // ---------- official samples ----------
+module.exports = [
 { id:"d2-01", domain:2, type:"single", select:1, source:"exam-guide-sample",
   question:"A developer must process 10,000 documents overnight to produce a non-urgent analytics report. Cost is the primary concern, and results are not needed until the following morning. Which approach best fits the requirement?",
   options:["Send every request synchronously through the Messages API in parallel to finish as quickly as possible.",
@@ -26,15 +26,14 @@ module.exports = [
     "Rely on a built-in tool, since built-in tools can reach any internal REST API."],
   correct:[1],
   explanation:"Official guide rationale: an MCP server exposes reusable tools that multiple applications can share and maintain independently. Hard-coding logic (A) is neither reusable nor maintainable. Pasting data (C) gives no live access and wastes context. Built-in tools (D) do not automatically reach arbitrary internal REST APIs." },
-// ---------- module 1 ----------
 { id:"d5-01", domain:5, type:"single", select:1, source:"generated",
-  question:"A team moves a ticket classifier to one of the newest Claude models and keeps its request settings, including temperature 0 for repeatable labels. Every request now fails with a 400 invalid_request_error. Labels must stay as consistent as possible. What should the team do?",
-  options:["Remove the sampling parameters and steer consistency through the prompt and output constraints",
-    "Keep temperature 0 and add top_p 1 so that the sampling settings form a valid combination",
-    "Move the temperature setting into the system prompt as an instruction to answer deterministically",
-    "Retry each failed request with backoff while temperature stays at 0 until it is accepted"],
+  question:"A team moves a ticket classifier to one of the newest Claude models and keeps temperature 0 for repeatable labels; every request now fails with a 400. The previous model retires next month, and cost per ticket must not rise. Labels must stay as consistent as possible. What should the team do?",
+  options:["Remove the sampling parameters, and pin the labels with an output constraint and examples",
+    "Remove temperature but set top_p to 0.1 so that sampling stays narrow on the new model",
+    "Stay on the previous model, which accepts temperature 0, until the prompt has been reworked",
+    "Remove the sampling parameters, and run each ticket three times to keep the majority label"],
   correct:[0],
-  explanation:"The newest models do not accept non-default sampling parameters: setting temperature, top_p or top_k returns a 400, and behavior is steered through prompting (and structured outputs) instead. Adding top_p (B) is another rejected parameter. A prompt sentence (C) is not a sampling control. A 400 is terminal, so retrying (D) fails the same way." },
+  explanation:"The newest models reject non-default sampling parameters (temperature, top_p, top_k), so consistency comes from the prompt and output constraints. top_p (B) is another rejected parameter. Staying (C) runs out next month. Majority voting (D) triples cost per ticket." },
 { id:"d5-02", domain:5, type:"single", select:1, source:"generated",
   question:"A test suite for a refund-summary feature asserts that the response equals a stored reference text. The tests fail on about a third of runs although reviewers judge every failing summary correct. The team wants tests that fail only when the feature is wrong. What should the tests check?",
   options:["The properties that must hold, such as required fields and parseable structure",

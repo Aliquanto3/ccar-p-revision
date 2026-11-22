@@ -2,7 +2,6 @@
 // (setting sources, permissions), adaptive thinking, MCP server development. Facts checked on
 // code.claude.com, platform.claude.com and modelcontextprotocol.io (Nov 2026). Key written first.
 module.exports = [
-// ---------- D8 — Claude Code configuration for delivery teams ----------
 { id:"d8-12", domain:8, type:"single", select:1, source:"generated",
   question:"A developer runs several Claude Code sessions in parallel, each in its own git worktree of the same repository. Her personal instructions for this project live in a gitignored CLAUDE.local.md, and only the session in the original checkout follows them. They must stay personal and apply to this project only. What should she do?",
   options:["Keep the instructions in a home-directory file and import it from each worktree's CLAUDE.local.md",
@@ -43,7 +42,6 @@ module.exports = [
     "Add each built-in tool to permissions.allow in the committed .claude/settings.json"],
   correct:[0],
   explanation:"The auto and bypassPermissions values of defaultMode do not take effect from project or local settings (B, C); set them in user or managed settings, or pass --permission-mode for one run, which also leaves developers' sessions alone. Committed allow rules (D) wait for folder trust and still leave other calls to the permission mode." },
-// ---------- D1 / D7 — Agent SDK ----------
 { id:"d1-19", domain:1, type:"multi", select:2, source:"generated",
   question:"A SaaS company runs one Agent SDK process per tenant, each in its own working directory, with default query() options. An audit shows agents following instructions from the host's ~/.claude/CLAUDE.md and recalling notes written in earlier sessions. Each tenant's agent must get only what the application configures. Which TWO changes are needed?",
   options:["Pass settingSources as an empty list to each query() call",
@@ -76,7 +74,6 @@ module.exports = [
     "Summarize the thinking into a short text block placed in each user turn instead"],
   correct:[0],
   explanation:"Thinking blocks carry the reasoning behind tool calls; the docs say to pass them back unmodified, especially during tool use. display omitted (B) empties the text but billing is the same. Low effort (C) reduces reasoning instead of keeping it. A rewritten summary (D) is not the block Claude produced, and text in tool-result turns teaches Claude to end its turn." },
-// ---------- D3 / D4 / D5 ----------
 { id:"d3-15", domain:3, type:"single", select:1, source:"generated",
   question:"A cost dashboard estimates each request's output cost from the token count of the response text the user sees. For a research agent with adaptive thinking on, the monthly invoice is about 40% above the dashboard. The team wants the dashboard to match billing and show how much goes to reasoning. What should it read?",
   options:["usage.output_tokens for billing, with output_tokens_details.thinking_tokens shown apart",
@@ -86,13 +83,13 @@ module.exports = [
   correct:[0],
   explanation:"Thinking tokens are billed as output and can exceed the visible text; usage.output_tokens stays the billing total, and output_tokens_details.thinking_tokens gives the reasoning share. Input tokens (B) are a different line. Counting the visible text (C) misses the thinking. display (D) changes what you see, not what is billed." },
 { id:"d4-13", domain:4, type:"single", select:1, source:"generated",
-  question:"A team moves its requests to adaptive thinking and sends thinking as {\"type\": \"adaptive\", \"effort\": \"medium\"}. The API rejects the requests with a 400 invalid_request_error. They want adaptive thinking at medium effort. What should the request contain?",
-  options:["thinking with type adaptive, and effort medium set under output_config",
-    "thinking with type enabled, and effort medium kept inside the thinking object",
-    "thinking with type adaptive, and output_config.effort set to the value adaptive",
-    "thinking with type adaptive, and budget_tokens set where effort used to be"],
+  question:"A team moves its agent to adaptive thinking, sending thinking as {\"type\": \"adaptive\", \"effort\": \"medium\"} for routine conversations and with high effort for hard ones, which arrive as separate conversations. Requests fail with a 400, and long conversations rely on prompt caching. What should each request contain?",
+  options:["thinking with type adaptive and effort under output_config, one effort level per conversation",
+    "thinking with type adaptive and effort under output_config, with effort changed turn by turn",
+    "thinking with type enabled and budget_tokens set per conversation in place of the effort value",
+    "thinking with type adaptive and effort kept inside it, with the model snapshot pinned per session"],
   correct:[0],
-  explanation:"Adaptive thinking is thinking: {type: adaptive}, and effort is set separately at output_config.effort. Effort does not belong inside the thinking object (B), adaptive is a thinking mode, not an effort value (C), and budget_tokens (D) is the legacy manual budget, not effort." },
+  explanation:"Adaptive thinking is thinking: {type: adaptive}, with effort set separately at output_config.effort; keeping one level per conversation avoids invalidating its cache. Changing effort turn by turn (B) can invalidate the cache. budget_tokens (C) is the deprecated manual budget, rejected on the newest models. Effort inside the thinking object (D) is the cause of the 400." },
 { id:"d4-14", domain:4, type:"single", select:1, source:"generated",
   question:"After a merge, a nightly claude -p job stops running the team's PreToolUse hooks from .claude/settings.json. The job log shows no error, and interactive sessions on a developer laptop open with a Settings Error dialog about the same file. The team must find and fix what is wrong. What should it do first?",
   options:["Run claude doctor to see what was rejected, then fix the file's JSON",
@@ -109,7 +106,6 @@ module.exports = [
     "A list of project and local"],
   correct:[0],
   explanation:"project loads the repository's settings, hooks, CLAUDE.md, rules, skills and subagents; user and local carry personal configuration. An empty list (B) drops the configuration under test. Omitting it (C) loads user, project and local. local (D) adds the gitignored CLAUDE.local.md and settings.local.json." },
-// ---------- D2 — building MCP servers ----------
 { id:"d2-23", domain:2, type:"single", select:1, source:"generated",
   question:"A booking MCP server rejects departure dates in the past by returning a JSON-RPC error with code -32602 and the message \"invalid params\". When it happens, Claude stops or tries other tools instead of fixing the date. The team wants Claude to correct its arguments and retry. How should the server report this case?",
   options:["As a tool result with isError true and a message saying the date must be in the future",
@@ -135,19 +131,19 @@ module.exports = [
   correct:[0],
   explanation:"Clients must treat tool annotations as untrusted unless they come from trusted servers, so annotation-based auto-approval belongs to a trusted list. Name matching (B) and consistency checks (C) still trust whatever a server declares. One earlier approval (D) says nothing about the honesty of the server's other annotations." },
 { id:"d2-26", domain:2, type:"single", select:1, source:"generated",
-  question:"An MCP server exposes extra admin tools as soon as a user's plan is upgraded during a session. Users see the new tools only after restarting their client. The team wants clients to pick them up during the session. What should the server do?",
-  options:["Declare tools.listChanged and send notifications/tools/list_changed when the list changes",
-    "Declare tools.listChanged and return the new tools inside the next tools/call response",
-    "Expose the admin tools from the start and return isError true until the user's plan is upgraded",
-    "Move the admin tools into a second server that the client connects to after the upgrade"],
+  question:"An MCP server exposes extra admin tools as soon as a user's plan is upgraded during a session; today users see them only after restarting their client. The server is used by MCP clients the team does not control, and the admin tools must not be offered before the upgrade. What should the server do?",
+  options:["Declare tools.listChanged and send notifications/tools/list_changed after the upgrade",
+    "List the admin tools from the start and return isError true from them until the upgrade",
+    "Serve the admin tools from a second server that clients add once the plan is upgraded",
+    "Compute the tool list from the plan at initialization for clients that reconnect"],
   correct:[0],
-  explanation:"A server that declares the listChanged capability notifies clients with notifications/tools/list_changed, and clients re-send tools/list. A tools/call result (B) is not where definitions are listed. Exposing locked tools (C) lets the model pick tools it cannot use. A second server (D) still needs the client to reconnect." },
+  explanation:"A server that declares the listChanged capability notifies clients with notifications/tools/list_changed, and clients re-send tools/list during the session. Listing locked tools (B) offers them before the upgrade. A second server (C) needs clients the team does not control to add it. Computing the list at initialization (D) still needs a reconnect." },
 { id:"d2-27", domain:2, type:"single", select:1, source:"generated",
-  question:"A team adds a release-notes template to its MCP server. Engineers should pick it from a menu or slash command, and the model should not start it on its own. Which primitive fits?",
-  options:["A prompt, the primitive that the user controls",
-    "A tool, described as only for use when users ask",
-    "A resource, which the application attaches",
-    "A tool, with readOnlyHint set to true on it"],
+  question:"A team adds a release-notes template to its MCP server. Engineers should start it from a slash command or a menu in any MCP client, passing the release version as an argument, and the model must not start it on its own. Which primitive fits?",
+  options:["A prompt with a version argument, which the user picks in the client",
+    "A resource template keyed by version, which the application attaches",
+    "A tool with a version parameter, annotated as read-only for the client",
+    "A tool with a version parameter, which clients set to need user approval"],
   correct:[0],
-  explanation:"Prompts are user-controlled templates, such as slash commands or menu options. Tools are model-controlled, whatever the description says (B, D). Resources are application-controlled context data (C)." }
+  explanation:"Prompts are user-controlled templates with arguments, surfaced as slash commands or menu items. Resource templates (B) are application-controlled data. Tools (C, D) are model-controlled: annotations describe them, and an approval step still lets the model start the call." }
 ];

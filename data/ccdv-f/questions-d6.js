@@ -2,13 +2,13 @@
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d6-01", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
-  question:"A support classifier's system prompt reads \"Classify the ticket.\" It returns Billing, billing, or a full sentence from run to run, and the router expecting one of three labels breaks. The team has already added \"be concise\" twice. What should change?",
-  options:["Add a paragraph describing each category in detail so that Claude recognizes which of them applies best",
-    "Append \"please format this correctly\" to the end of each user message that is sent",
-    "Name the three labels and require only the label, with two tagged examples showing the exact casing",
-    "Enable extended thinking so that Claude reasons about the category before returning its answer"],
+  question:"A support classifier's prompt reads \"Classify the ticket.\" It returns Billing, billing, or a full sentence, and the router expecting one of three plain-text labels breaks. The router reads plain text and cannot change this quarter. What should change in the prompt?",
+  options:["Use JSON outputs with an enum of the three labels, and drop the instruction to classify the ticket",
+    "Add a tagged example for each label and leave the one-line instruction as it is",
+    "Name the three labels and require only the label, with two tagged examples of the casing",
+    "Ask for the label in lowercase, and have the router trim the reply before matching it"],
   correct:[2],
-  explanation:"Wrong shape points to a missing output constraint; few-shot examples show the casing, and XML tags keep the examples apart from the instruction. More description (A) and polite rewording (B) are the passes that kept failing. Reasoning (D) does not fix format and costs tokens on a lookup task." },
+  explanation:"Wrong shape points to a missing output constraint, and examples show the exact casing. JSON outputs (A) would return JSON the plain-text router cannot read. Examples alone (B) leave no rule against sentences. Changing the router (D) is ruled out this quarter." },
 { id:"d6-02", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
   question:"After five revision passes, each adding paragraphs about edge cases, a classification prompt now produces answers of over 2,000 characters and latency has risen, with no gain in accuracy. What does this pattern call for?",
   options:["Add a sixth paragraph telling the model to keep its answers short and to the point on each ticket",
@@ -90,11 +90,11 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
   correct:[0],
   explanation:"Stage-by-stage diagnosis starts by splitting failures: answer not retrieved points to retrieval (chunking, embeddings, search), answer retrieved but ignored or misread points to generation (prompt, assembly). Average similarity (B) does not say whether the right passage came back. A bigger model (C) and token counts (D) test fixes before knowing which stage fails." },
 { id:"d6-p07", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
-  question:"When no retrieved passage contains the answer, a benefits assistant still answers fluently from general knowledge, and employees have acted on wrong figures. Answers must be traceable to company documents. What should the team change?",
-  options:["Lower the temperature on each request so that the model invents fewer figures when it answers",
-    "Move the assistant to a larger model, which knows more about benefits from all its training data",
-    "Require answers drawn only from the passages with citations, plus a not-found reply otherwise",
-    "Pass more passages to the model on each question so that the answer is more often included"],
+  question:"When no retrieved passage contains the answer, a benefits assistant still answers fluently, and employees have acted on wrong figures. Answers must be traceable to company documents only. What should the team change?",
+  options:["Retrieve more passages for each question and rerank them so the best ones reach the model",
+    "Add web search as a fallback source for questions the retrieved passages do not answer",
+    "Answer only from the passages with citations the app checks, and say when they lack it",
+    "Require a citation for each claim, and let the model fill gaps from general knowledge"],
   correct:[2],
-  explanation:"Grounding means answering from the sources with citations a reader can check, and declaring when the sources do not contain the answer; the application can also reject answers whose citations do not resolve. Sampling settings (A) do not ground anything, and the newest models reject them. More training knowledge (B) is the problem, not the fix. More passages (D) does not help when none holds the answer." }
+  explanation:"Grounding means answering from the sources, with citations the application can verify, and declaring when the sources do not contain the answer. More passages and reranking (A) help when the answer exists, not when it is missing. Web search (B) grounds on sources outside company documents. Filling gaps from general knowledge (D) is the failure itself." }
 ]);
