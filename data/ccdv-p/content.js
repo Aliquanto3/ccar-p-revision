@@ -41,6 +41,11 @@ window.NOTES["ccdv-p"] = {
         "Managed agents ship with caching and compaction on by default.",
         "Skills and subagents: a subagent does not see skills invoked in the main thread (a fork starts from a copy of the conversation). Built-ins (Explore, Plan) do not preload skills; custom subagents preload the skills in their skills field, in full, at startup — keep Skill in a restricted tools list to invoke unlisted ones."
       ]},
+      { title: "Approvals, delegation and patterns", points: [
+        "Approvals that take hours are durable pauses: persist state, end the run, resume on the approval event. Each worker writes its own artifact; the supervisor merges. Workers get deadlines with bounded retries, and the synthesis states any gap.",
+        "Subagents get least-privilege tools and a task brief (goal, inputs, output format), not the parent's history. Checkpoint after each side-effecting step.",
+        "Patterns: evaluator-optimizer when criteria are explicit and feedback names the failure; routing when inputs fall into distinct categories. Durable knowledge lives in external memory, model-agnostic. Agents on company infrastructure standardize on the Agent SDK with shared hooks."
+      ]},
       { title: "Orchestration, durability and architecture evolution", points: [
         "Workers hand back compact fixed-format reports; full logs go to storage. Pipelines hand off through shared files (plan with acceptance criteria, result file), not transcripts or self-written summaries.",
         "Durable runs: checkpoint after each completed step, resume from it, make side effects idempotent (idempotency keys). Pin the model per long session; new sessions take the evaluated version.",
@@ -104,6 +109,11 @@ window.NOTES["ccdv-p"] = {
         "mcp_servers declares the connection (type url, url, name, optional authorization_token); a tools entry of type mcp_toolset with mcp_server_name grants access. Claude introspects the server: no schemas to write. Beta header mcp-client-2025-11-20.",
         "Restrict to a subset: default_config {enabled: false}, then enable named tools in configs (e.g. read-only search) — also keeps unused definitions out of context."
       ]},
+      { title: "Resilience, throughput and change management", points: [
+        "Circuit breaker on sustained overload (fallback, half-open probes); degraded mode serves what the cache can answer and queues the rest. A context-window stop needs a smaller context, not another model.",
+        "Find the binding constraint: input tokens per minute count only uncached and cache-write tokens, so caching a shared prefix raises throughput. Bounded queues with 429 + retry-after for backpressure.",
+        "Remote MCP: OAuth per user for per-user permissions and attribution. Tool schemas change additively, old shape kept until callers migrate. Model migrations: shadow traffic, then canary; test on the production platform; progressive rollout with automatic rollback; an LLM gateway centralizes keys, quotas, logging and routing. Citations on documents give auditable spans."
+      ]},
       { title: "Grounding diagnosis and resilience at scale", points: [
         "Diagnose retrieval failures stage by stage: was the answer's passage retrieved? No → retrieval (chunking, embeddings, hybrid lexical search for identifiers, reranking when recall@50 is fine but precision@5 is not). Yes → generation (prompt, assembly).",
         "Grounded answers: only from passages, with citations the app can check, and an explicit not-found reply when sources lack the answer.",
@@ -155,6 +165,10 @@ window.NOTES["ccdv-p"] = {
         "Retention: default = kept indefinitely; custom window ≥ 30 days, no zero option; organization-wide (a chat in a project follows the project's window). Shortening later deletes history for good.",
         "Exceptions: activity feed 6 years regardless · remote (cloud) session transcripts have no default period: kept until the member deletes them, except cloud sessions Claude started from a chat, deleted with that chat (the course says “6 years”; the compliance docs say no default period) · local Cowork / Claude Code transcripts = finite custom window (chats or all data), else 6 years from capture; with HIPAA readiness 30 days from capture, or the custom window if shorter.",
         "Inference hooks: every prompt from chat, Cowork and Claude Code goes to the security team’s server for allow-or-deny before Claude answers — block at the door instead of governing after the fact."
+      ]},
+      { title: "SLOs, KPIs and behavioral telemetry", points: [
+        "Page on error-budget burn rate (short and long windows), not on each failure. Report cost per successful task, retries and failures included.",
+        "Watch the tool-call mix per run for behavioral shifts; record per-call tool inputs and outputs, and for RAG the passage IDs, index version and cited spans. Fixed probe sets on a schedule isolate model and prompt changes from traffic-mix changes."
       ]},
       { title: "Tracing, sampling and drift", points: [
         "One trace per run, a span per model and tool call, trace ID propagated to subagents and tool backends; tag each trace with model ID, prompt version and tool schema version so quality can be compared by cohort.",

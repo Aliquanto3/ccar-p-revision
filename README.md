@@ -24,8 +24,8 @@ Only multi-constraint scenario items ("hard" level) are served: they are the clo
 | Cert | Live items | Notes |
 |---|---|---|
 | CCAR-P | 217 | 214 hard + 3 official Exam Guide samples |
-| CCDV-P | 196 | 3 official samples + 121 items from course modules 1–8 + 45 Foundations refresher items (API mechanics, Claude Code config, Agent SDK, MCP servers, eval graders) + 27 gap items (D1/D2/D3/D5) — target ~240 |
-| CCDV-F | 138 | 3 official samples + 61 items from the Foundations course (modules 1–5) + 20 gap items (D1/D2) + 54 items shared with CCDV-P (`tools/ccdv-f/src/m90.js`) — target ~160 |
+| CCDV-P | 240 | 3 official samples + 121 items from course modules 1–8 + 45 Foundations refresher items + 71 gap items written from the guide task statements — target reached |
+| CCDV-F | 160 | 3 official samples + 61 items from the Foundations course (modules 1–5) + 26 gap items + 70 items shared with CCDV-P (`tools/ccdv-f/src/m90.js`) — target reached |
 
 CCDV-P items are written per course module in `tools/ccdv-p/src/mNN.js` (key first) and built with `node tools/ccdv-p/build.js`, which rotates key positions and writes `data/ccdv-p/`. Every generated item passes the anti-cue linter (`node tools/lint-cues.js --cert ccdv-p`, rules R1–R6: no justification clauses in options, no absolutes in distractors only, symmetric punctuation / enumeration / register, option lengths within ±15 % of the median). Official samples (`exam-guide-sample`) are excluded from the lint and never edited.
 

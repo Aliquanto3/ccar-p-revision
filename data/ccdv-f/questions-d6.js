@@ -1,4 +1,4 @@
-// CCDV-F Revision — Domain 6: Prompt and Context Engineering (11%) — 12 items
+// CCDV-F Revision — Domain 6: Prompt and Context Engineering (11%) — 16 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d6-01", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -96,5 +96,37 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
     "Answer only from the passages with checked citations, and say so when they lack the answer",
     "Answer from the passages and general knowledge with checked citations, and flag the gaps"],
   correct:[2],
-  explanation:"Grounding means answering from the sources, with citations the application can verify, and declaring when the sources do not hold the answer. Web search (A) cites sources outside company documents. Without citations (B) answers are not traceable. General knowledge (D) is the failure itself, flagged or not." }
+  explanation:"Grounding means answering from the sources, with citations the application can verify, and declaring when the sources do not hold the answer. Web search (A) cites sources outside company documents. Without citations (B) answers are not traceable. General knowledge (D) is the failure itself, flagged or not." },
+{ id:"d6-p08", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A main agent spawns a subagent to analyze one log file and passes it the full 60-turn conversation so far as context. The subagent's analysis is slow, costly and often drifts to topics from earlier turns. What should the delegation pass?",
+  options:["The full conversation as now, plus a final line asking the subagent to stay on the log",
+    "A summary of the full conversation, plus the log file's location and the expected format",
+    "The last ten turns of the conversation, plus the log file's location and the output format",
+    "A task brief with the goal, the log file's location and the expected output format"],
+  correct:[3],
+  explanation:"Context isolation means the subagent gets what its task needs and nothing else: goal, inputs, output format. The full conversation (A), a summary of it (B) or its recent turns (C) bring in unrelated context that costs tokens and pulls the analysis off course." },
+{ id:"d6-p09", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A compliance assistant answers from policy documents, and auditors must be able to check the exact source span behind each sentence. The current prompt asks Claude to quote sources in brackets, and some quotes do not appear in the documents. What should the team use?",
+  options:["Stricter prompting that asks for quotes copied exactly, with an example of a correct bracket quote",
+    "A second model call that checks each bracket quote and removes those it cannot find",
+    "The API's citations feature on the documents, which returns the cited spans with each answer",
+    "JSON outputs with a quote field per sentence so that each quote is returned in a set place"],
+  correct:[2],
+  explanation:"Citations on document blocks return the exact cited text and its location, which auditors can verify, instead of quotes the model writes itself. A stricter prompt (A) still lets the model paraphrase. A checker (B) removes bad quotes but leaves sentences unsupported. JSON outputs (D) give the quote a place, not a guarantee it exists in the source." },
+{ id:"d6-p10", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A long coding session follows the rule \"never edit files under migrations/\" for 30 turns, then edits one after a compaction. Before blaming the model, the team wants to find where the rule went. What should it inspect first?",
+  options:["The model's thinking at the failing turn, checking whether it considered the rule there",
+    "The tool definitions, checking whether the edit tool's description mentions migrations",
+    "The context at the failing turn, checking whether the compaction summary kept the rule",
+    "The session's token count, checking whether the window was close to its limit then"],
+  correct:[2],
+  explanation:"A rule that held until a compaction and broke right after points to the harness: check whether it survived into the post-compaction context. If it was dropped, the fix is in the summary or a hook, not the model. Thinking (A) is a later step. The tool description (B) was the same before. The token count (D) explains why compaction ran, not what it kept." },
+{ id:"d6-p11", domain:6, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"After a system prompt update, refusals on a security-advice assistant jump from 0.2% to 6%, all with stop_reason refusal on ordinary questions about password policies. The update added a paragraph about \"attack techniques the assistant must never explain\". What should the team do first?",
+  options:["Retry the refused requests on a fallback model, which may refuse these questions less often",
+    "Diff the prompt change against the refused requests, and test the paragraph's wording on them",
+    "Raise the effort level so that the model reads the new paragraph more carefully before replying",
+    "Roll back to an older model version, which refused these questions less often before the update"],
+  correct:[1],
+  explanation:"Refusals are a failure class with a cause to find: a spike right after a prompt change points at the new wording, so test it against the refused requests and narrow it. A fallback model (A) hides the regression. Effort (C) does not change what triggers refusals. The model did not change (D)." }
 ]);

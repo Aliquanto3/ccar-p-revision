@@ -1,4 +1,4 @@
-// CCDV-F Revision — Domain 7: Security and Safety (8.1%) — 11 items
+// CCDV-F Revision — Domain 7: Security and Safety (8.1%) — 12 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d7-01", domain:7, type:"single", select:1, difficulty:"hard", source:"exam-guide-sample",
@@ -88,5 +88,13 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
     "Rely on annotations from any server, but ask when destructiveHint and readOnlyHint disagree",
     "Rely on annotations from any server once a user has approved one of that server's tools before"],
   correct:[1],
-  explanation:"Clients must treat tool annotations as untrusted unless they come from trusted servers, so annotation-based auto-approval belongs to a trusted list. Name matching (A) and consistency checks (C) still trust whatever a server declares. One earlier approval (D) says nothing about the honesty of the server's other annotations." }
+  explanation:"Clients must treat tool annotations as untrusted unless they come from trusted servers, so annotation-based auto-approval belongs to a trusted list. Name matching (A) and consistency checks (C) still trust whatever a server declares. One earlier approval (D) says nothing about the honesty of the server's other annotations." },
+{ id:"d7-p03", domain:7, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A support assistant sometimes includes other customers' phone numbers in replies, when they appear in retrieved ticket history. The system prompt already forbids sharing personal data. Replies must not leak such data, even if the model slips. What should the team add?",
+  options:["An output check that detects and redacts personal data before the reply is sent, and logs each hit",
+    "A second sentence in the system prompt repeating that personal data must not be shared with users",
+    "A larger model for the assistant, which follows the instruction on personal data more reliably",
+    "An input check that blocks user questions mentioning phone numbers before the model sees them"],
+  correct:[0],
+  explanation:"A prompt is a probabilistic control; a deterministic output guardrail catches leaks the model lets through, and logging shows how often it fires. Repeating the rule (B) or a bigger model (C) stays probabilistic. The leaked data comes from retrieval, not from user questions (D); scoping retrieval to the current customer is the other layer." }
 ]);

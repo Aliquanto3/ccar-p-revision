@@ -1,4 +1,4 @@
-// CCDV-F Revision — Domain 5: Model Selection and Optimization (16.8%) — 22 items
+// CCDV-F Revision — Domain 5: Model Selection and Optimization (16.8%) — 26 items
 window.BANK = window.BANK || {};
 window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
 { id:"d5-01", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
@@ -176,5 +176,37 @@ window.BANK["ccdv-f"] = (window.BANK["ccdv-f"] || []).concat([
     "input_tokens plus cache_read tokens, both billed at the normal input price",
     "output_tokens plus input_tokens, as cache writes are billed as output tokens"],
   correct:[0],
-  explanation:"With caching on, input_tokens excludes the cached prefix; the true input is input_tokens + cache_read_input_tokens + cache_creation_input_tokens, with reads at a fraction of the price and writes at a premium (1.25× for 5 minutes, 2× for 1 hour). Cached tokens are not free (B), reads are not full price (C), and writes are input, not output (D)." }
+  explanation:"With caching on, input_tokens excludes the cached prefix; the true input is input_tokens + cache_read_input_tokens + cache_creation_input_tokens, with reads at a fraction of the price and writes at a premium (1.25× for 5 minutes, 2× for 1 hour). Cached tokens are not free (B), reads are not full price (C), and writes are input, not output (D)." },
+{ id:"d5-p13", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A document-analysis service stays well under its requests-per-minute limit but hits its input-tokens-per-minute limit at peak. Each request carries the same 40,000-token policy manual followed by a short document. What change raises throughput the most?",
+  options:["Spread requests across more worker threads so that more of them run within each passing minute",
+    "Retry 429 responses at once so that the requests fill the limit window as soon as it reopens",
+    "Cache the shared policy manual, as cache reads do not count toward the input token limit",
+    "Batch the requests into fewer, larger calls that each carry several documents behind the manual"],
+  correct:[2],
+  explanation:"The binding constraint is input tokens, dominated by the repeated manual; with prompt caching, cache reads do not count toward the input-tokens-per-minute limit (only uncached and cache-write tokens do), and they cost less too. More threads (A) and instant retries (B) push against the same token limit. Packing documents together (D) still sends the manual's tokens and mixes the analyses." },
+{ id:"d5-p14", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A nightly job classifies two million support messages. Each request carries the same 3,000-token taxonomy and a short message, and results are needed by 7:00. The team wants the lowest cost. Which setup fits?",
+  options:["Synchronous requests with the taxonomy behind a cache breakpoint, run across many workers",
+    "Message Batches without caching, as the batch discount already covers the shared taxonomy",
+    "Synchronous requests without caching, using the smallest model that passes the eval set",
+    "Message Batches with the taxonomy behind a cache breakpoint, submitted early in the night"],
+  correct:[3],
+  explanation:"Batch pricing and prompt caching stack: the discount applies to each request, and caching cuts the cost of the shared prefix inside each one; submitting early leaves room within the processing window. Synchronous calls (A, C) give up the batch discount. Batches without caching (B) pay full input price for the taxonomy two million times." },
+{ id:"d5-p15", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"A dashboard reports cost per request for a document agent. After a prompt change, cost per request fell 20%, but runs now fail more often and users retry them. Leadership wants one cost figure that reflects value delivered. What should the dashboard show?",
+  options:["Cost per successful task, counting the tokens of failed attempts and retries toward it",
+    "Cost per request as now, with the failure rate shown on a separate panel right next to it",
+    "Cost per thousand tokens, which stays comparable when the prompt length changes",
+    "Cost per user per month, divided across the requests that each user sends over it"],
+  correct:[0],
+  explanation:"Cost per successful task folds failures and retries into the cost of what was delivered, so a cheaper prompt that fails more no longer looks better. Two separate panels (B) leave the trade-off to the reader. Price per token (C) ignores how many tokens a task takes. Cost per user (D) hides whether tasks succeed." },
+{ id:"d5-p16", domain:5, type:"single", select:1, difficulty:"hard", source:"generated",
+  question:"An extraction agent fails on about 5% of runs for the same kind of input, and engineers cannot reproduce it on demand. What should they do first?",
+  options:["Run the same failing input once at higher effort, to see whether more reasoning makes it pass",
+    "Lower the temperature for this input type so that the agent behaves the same way on each run",
+    "Add the failing input to the eval set, and wait for the next nightly run to show whether it fails",
+    "Run the same failing input many times to measure the rate, and compare passing and failing traces"],
+  correct:[3],
+  explanation:"Non-deterministic failures are studied statistically: repeat the input to get a failure rate, then diff passing and failing traces to find where they diverge. One run (A) proves nothing at 5%. Sampling settings (B) are rejected on the newest models and do not explain the failure. One nightly run (C) likely passes." }
 ]);
